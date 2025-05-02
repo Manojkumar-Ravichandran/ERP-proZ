@@ -1,0 +1,51 @@
+.inputContainer label,
+.inputContainer input {
+  display: block;
+}
+
+.inputContainer label {
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color:#666666;
+  margin-left: 0px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+
+.inputContainer input {
+    display: block;
+    /* width: 100%; */
+    padding: 0.422rem 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.5;
+    /* color: #6f6b7d; */
+    /* background-color: #fff; */
+    border: 1px solid #dbdade;
+    border-radius: 0.375rem;
+}
+
+.inputContainer input:focus-visible {
+  outline: 1px solid var(--primary-color);
+  border: unset;
+
+}
+
+.error {
+  border-color: red;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 13px;
+}
+
+.uppercase-input {
+  text-transform: uppercase;
+}
+.search_icon{
+  background-color: #dbdade;
+}

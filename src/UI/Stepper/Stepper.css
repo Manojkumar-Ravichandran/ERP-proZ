@@ -1,0 +1,86 @@
+.stepper-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  overflow: visible;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  position: relative;
+
+}
+
+.step {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 4px;
+  min-width: 140px;
+  padding-left: 16px;
+  padding-right: 16px;
+  clip-path: polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 15% 50%, 0% 0%);
+  cursor: pointer;
+
+}
+.step:first-child{
+  clip-path: polygon(85% 0%, 100% 50%, 85% 100%, 0% 100%, 0% 0%, 0% 0%);
+  border-radius: 16px;
+}
+.step:not(:first-child){
+  left: -15px;
+
+}
+.step:nth-child(3){
+  left: -30px;
+
+}
+.step:nth-child(4){
+  left: -45px;
+
+}
+.step:nth-child(5){
+  left: -60px;
+
+}
+
+.step.active {
+  background-color: var(--primary-color); 
+  color: white;
+}
+
+.step::before {
+  content: "";
+  height: calc(100% - 2px);
+  width: calc(100% - 3px);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  clip-path: polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 15% 50%, 0% 0%);
+  
+}
+
+.step span {
+  z-index: 2;
+  position: relative;
+}
+
+.step.dropdown-step{
+  position: relative;
+  overflow: visible;
+  height: auto;
+  
+}
+ #dropdown{
+  background-color: #ffffff;
+  z-index: 1000;
+  position: absolute;
+  top:41px;
+  right: 7px;
+  @apply text-secondary-500;
+}
+

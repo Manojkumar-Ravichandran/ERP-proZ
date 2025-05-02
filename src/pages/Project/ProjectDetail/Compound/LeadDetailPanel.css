@@ -1,0 +1,60 @@
+.whatsapp {
+  background-color: rgb(177, 239, 177) !important;
+  color: green;
+}
+.file {
+  background-color: #a4cef1;
+  color: #2196f3;
+}
+.mail {
+  background-color: rgb(235, 203, 142);
+  color: brown;
+}
+.note {
+  background-color: rgb(219, 202, 245);
+  color: rgb(137, 9, 222);
+}
+
+.feildvisit {
+  background-color: #a8e2e4;
+  color: #055658;
+}
+
+.activity {
+  background-color: rgb(219, 202, 245);
+  color: rgb(137, 9, 222);
+}
+
+.meeting {
+  background-color: #fff3cd;
+  border-color: #fff3cd;
+  color: #664d03;
+}
+
+.notes__card:nth-child(even) .notes__content {
+  @apply shadow-sm rounded-sm;
+  background: #fff;
+}
+
+.info--box {
+  margin-top: 1.5rem;
+  position: relative;
+  border-bottom: 1px dashed #2c2c2c;
+}
+
+.content--box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  @apply border-gray-400 border flex p-1 px-2;
+}
+.btn-hover:hover {
+  color: color-mix(in srgb, var(--primary-color) 100%, black);
+  background-color: color-mix(in srgb, var(--primary-color) 15%, transparent);
+  border: 1px solid var(--primary-color);
+}
+.tab-active{
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--primary-color);
+}

@@ -1,0 +1,35 @@
+.custom-select {
+    position: relative;
+  }
+  
+  .custom-select select {
+    width: 100%;
+    padding: 6px;
+    border: 1px solid #dbdade;
+    border-radius: 4px;
+    appearance: none;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>') no-repeat right 10px center;
+    background-size: 18px;
+  }
+  
+  .custom-select select:focus {
+    outline: none;
+    border-color: #007bff; 
+  }
+  
+  .custom-select.disabled select {
+    background-color: #cacaca;
+    cursor: not-allowed;
+  }
+.select-label{
+    margin-bottom:8px !important;
+  font-size: 14px;
+  color: #666666;
+}
+.dark-mode .select-label{
+  color: inherit;
+}
+label{
+  /* margin-top: 8px; */
+  margin-bottom: 8px;
+}

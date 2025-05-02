@@ -1,0 +1,174 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end; 
+  z-index: 1500;
+  overflow: hidden;
+  margin-top: 0px !important;
+}
+
+/* Add slide-in animation for the modal */
+@keyframes slideInBottomRight {
+  from {
+    transform: translate(100%, 100%);
+  }
+  to {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes slideOutBottomRight {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(100%, 100%);
+  }
+}
+
+/* Add slide-in animation for the modal from bottom-left corner */
+@keyframes slideInBottomLeft {
+  from {
+    transform: translate(-100%, 100%);
+  }
+  to {
+    transform: translate(0, 0);
+  }
+}
+@keyframes slideInBottomLeft {
+  from {
+    transform: translate(100%, 0%);
+  }
+  to {
+    transform: translate(0%, 0);
+  }
+}
+
+@keyframes slideOutBottomLeft {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(-100%, 100%);
+  }
+}
+
+/* Modal content styles */
+/* .modal-content {
+  background: #fff;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-radius: 8px 0 0 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: slideInBottomLeft 0.3s ease-out; 
+  width: 100%;
+  max-width: 500px;
+  height: 100vh;
+} */
+
+/* Slide-out class */
+.modal-content.slide-out {
+  animation: slideOutBottomRight 0.3s ease-in;
+}
+
+/* Modal content for bottom-left */
+.modal-content.bottom-corner.slide-out {
+  animation: slideOutBottomLeft 0.3s ease-in;
+}
+
+/* Align modal to bottom-right corner */
+.modal-content.bottom-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-radius: 8px 0 0 8px;
+}
+
+/* Align modal to bottom-left corner */
+.modal-content.bottom-left {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Modal Header, Footer, and Button Styles */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+
+}
+
+.modal-body {
+  max-height: 85vh; 
+  overflow-y: auto; 
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.modal-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #e1e1e4;
+  color: #808390;
+}
+
+/* Base styles for modal sizes */
+.modal-content {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px 0 0 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: slideInBottomLeft 0.3s ease-out;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Medium size (default) */
+.modal-content-m {
+  max-width: 500px;
+}
+
+/* Large size */
+.modal-content-l {
+  max-width: 700px;
+}
+
+/* Extra Large size */
+.modal-content-xl {
+  max-width: 900px;
+}
+
+.modal-content-xxl {
+  max-width: 85%;
+}

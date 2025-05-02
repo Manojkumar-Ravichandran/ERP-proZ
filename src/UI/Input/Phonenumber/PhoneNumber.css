@@ -1,0 +1,15 @@
+
+
+  #phone{
+    border: none !important; /* Remove border */
+  }
+  #phone:focus-visible{
+    outline: none !important; /* Remove outline on focus */
+  }
+
+  #contact{
+    border: none !important; /* Remove border */
+  }
+  #contact:focus-visible{
+    outline: none !important; /* Remove outline on focus */
+  }

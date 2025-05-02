@@ -1,0 +1,44 @@
+   .accordion {
+    width: 100%;
+  }
+  
+  .accordion-item {
+    padding: 0.5rem 0;
+    @apply border rounded mb-4
+  }
+  
+  .accordion-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.5rem;
+    font-weight: 500;
+    background-color: white;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    border-radius: 8px;
+    color: var(--secondary--300);
+  }
+  
+  .icon {
+    transition: transform 0.3s ease;
+  }
+  
+  .icon.rotate {
+    transform: rotate(180deg);
+  }
+  
+  .accordion-content {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    background-color: white;
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    color: var(--secondary--300);
+  }
+  

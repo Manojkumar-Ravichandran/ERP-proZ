@@ -1,0 +1,25 @@
+.msg-btn{
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.icon--email{
+    background-color:#fef9c3 ;
+    color: #854d0e;
+}
+.icon--whatsapp{
+    background-color: #dcfce7;
+    color:#166534;
+}
+.icon--direct{
+    background-color: #f3e8ff;
+    color:#86198f;
+}
+.icon--phone{
+    background-color: #dcfce7;
+    color:#166534;
+}
+.icon--Message{
+    background-color: #ffedd5;
+    color:#9a3412;
+}

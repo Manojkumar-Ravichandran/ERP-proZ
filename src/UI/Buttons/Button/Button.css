@@ -1,0 +1,19 @@
+.button__btn{
+    color:var(--white);
+    padding:.5rem 1rem;
+    border-radius: .25rem;
+    margin: .5rem 0;
+    font-weight: 500;
+
+}
+@media (max-width:1020px) {
+    .button__btn{
+    font-size: 12px;
+    }
+}
+/* 
+.btn__sm {
+    padding: .25rem 1rem !important;
+    height: 30px;
+    width: 100px;
+} */

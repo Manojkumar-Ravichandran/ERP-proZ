@@ -1,0 +1,54 @@
+.selectable__card{
+    /* box-shadow: 1px 1px 8px 3px #b7b5b558; */
+    cursor: pointer;
+    border-radius: .25rem;
+    max-width: 260px;
+    padding-top: 2rem;
+    position: relative;
+    font-size: var(--text--sm);
+
+}
+
+.selectable__card:hover{
+    /* box-shadow: 5px 8px 11px 3px #dedede; */
+
+}
+
+.disabled{
+    background-color: var(--secondary--10);
+    border: 2px solid var(--secondary--100);
+    cursor: not-allowed;
+}
+
+.selected{
+    border: 2px solid var(--primary--500);
+}
+
+.card--container{
+    
+}
+.card--container input{
+    position: absolute;
+    top: 10px;
+    right: 5%;
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+    border-radius: 50%;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+}
+.card--container input[type="checkbox"]:checked {
+    background-color: var(--primary--500);
+  }
+
+  input[type="checkbox"]:checked::after {
+    content: '\2713';
+    color: white;
+    font-size: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }

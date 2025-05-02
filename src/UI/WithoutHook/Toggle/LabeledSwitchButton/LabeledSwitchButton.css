@@ -1,0 +1,45 @@
+/* Toggle switch base */
+.toggle-switch {
+    position: relative;
+    width: 98px;
+    height: 30px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: var(--primary-color);
+}
+.toggle-label {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 500;
+    font-size: 14px;
+    color: white;
+    transition: opacity 0.3s ease;
+}
+
+.toggle-label:nth-child(1) {
+    left: 10px;
+}
+
+.toggle-label:nth-child(2) {
+    right: 10px;
+}
+/* .toggle-button:nth-child(2){
+    left: 4px;
+} */
+.toggle-button {
+    position: absolute;
+    top: 7.6px;
+    left: 4px;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 9999px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.toggle-button.translate-x-8 {
+    transform: translateX(74px);
+}

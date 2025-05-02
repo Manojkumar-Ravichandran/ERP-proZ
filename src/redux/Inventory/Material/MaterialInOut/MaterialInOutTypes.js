@@ -1,0 +1,10 @@
+export const MATERIALINOUT_CREATE = "MATERIALINOUT_CREATE";
+export const MATERIALINOUT_UPDATE = "MATERIALINOUT_UPDATE";
+export const MATERIALINOUT_FETCH = "MATERIALINOUT_FETCH";
+export const MATERIALINOUT_SUCCESS = "MATERIALINOUT_SUCCESS";
+export const MATERIALINOUT_FAILURE = "MATERIALINOUT_FAILURE";
+// MarerialInOutSagas
+// MarerialInOutTypes
+// MarerialInOutAction
+// MarerialInOutEffect
+// MarerialInOutReducer

@@ -1,0 +1,71 @@
+/* In your CSS file */
+
+/* .sun {
+    color: #fff3e2; 
+  } */
+  
+  .sun {
+    color: #e5780b; 
+  }
+/*   
+  .moon {
+    color: #2f3a58;
+  } */
+  
+  .moon {
+    color: #8ea6de;
+  }
+input{
+  border: 1px solid #dbdade;
+  width: 150%;
+}
+@media (max-width:1000px){
+    input{
+        border: 1px solid #dbdade;
+        width: 100%;
+      }
+}
+/* AG Grid background */
+.dark-mode .ag-theme-alpine {
+  background-color: #2f3349; 
+  color: white !important; 
+}
+.dark-mode .ag-header-cell-text {
+  color: white !important;
+}
+.dark-mode .ag-icon{
+  color: white;
+}
+.dark-mode .ag-header,.dark-mode .ag-row  {
+  background-color: #3b3f56; 
+  color: white !important; 
+}
+.dark-mode .ag-row:nth-child(odd) {
+  background-color: #3a3f58; 
+  color: white !important; 
+}
+.dark-mode .ag-row:hover {
+  background-color: #4b4f66; 
+}
+.dark-mode .CalendarMonth ,.dark-mode .CalendarMonth_caption ,
+.dark-mode .DayPicker_transitionContainer__horizontal,
+.dark-mode .CalendarDay__default ,
+.dark-mode .DayPicker_weekHeader_ul,
+.dark-mode .CalendarMonthGrid,
+.dark-mode.CalendarMonth_table {
+ background-color: #2f3349;
+color: white;
+}
+.dark-mode .DateInput_fangShape{
+  fill:#2f3349;
+  stroke: #2f3349;
+}
+.dark-mode .ag-paging-panel ,
+.dark-mode .ag-list,
+.dark-mode .ag-paging-panel > .ag-paging-page-size .ag-wrapper{
+  background-color: #2f3349;
+  color: white;
+}
+.dark-mode .ag-theme-alpine .ag-paging-row-summary-panel-number {
+  color: white;
+}

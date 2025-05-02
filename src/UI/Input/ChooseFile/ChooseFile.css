@@ -1,0 +1,47 @@
+.file-input-container {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  /* padding: 8px; */
+  cursor: pointer;
+}
+
+.file-input-container label {
+  padding: 8px 16px;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 5px;
+  font-weight: 500;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.file-input-container input[type="file"] {
+  display: none;
+}
+
+.file-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  color: #b2b8c1;
+}
+
+.remove-button {
+  background-color: transparent;
+  border: none;
+  color: #999;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 5px;
+  padding: 0;
+  transition: color 0.2s ease-in-out;
+}
+
+.remove-button:hover {
+  color: #c00;
+}

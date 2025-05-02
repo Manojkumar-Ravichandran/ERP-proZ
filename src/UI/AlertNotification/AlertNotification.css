@@ -1,0 +1,54 @@
+.alert-notification {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 5px;
+    color: white;
+    position: absolute;
+    top: 4rem;
+    right: 1rem;
+    width: 400px;
+    font-size: 0.9rem;
+    z-index: 17000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  
+  .alert-notification.success {
+    background-color: #ddf6e8;
+    border-color: #ddf6e8;
+    color: #28c76f;
+  }
+  
+  .alert-notification.error {
+    background-color: #fce4e4;
+    border-color: #fce4e4;
+    color: #ea5455;
+  }
+  
+  .alert-notification.warning {
+    background-color: #fff0e1;
+    border-color: #fff0e1;
+    color: #ff9f43;
+  }
+  
+  .alert-notification.info {
+    background-color: #d6f7fb;
+    border-color: #d6f7fb;
+    color: #00cfe8;
+  }
+  
+  .alert-message {
+    flex: 1;
+  }
+  
+  .alert-close {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+  

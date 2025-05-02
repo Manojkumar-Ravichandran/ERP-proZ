@@ -1,0 +1,55 @@
+.h1 {
+    font-size: 2em;
+    font-weight: bold;
+    /* color: #333; */
+    color:var(--primary-color)
+
+  }
+  
+  .h2 {
+    font-size: 1.75em;
+    font-weight: bold;
+    /* color: #444; */
+    color:var(--primary-color)
+
+  }
+  
+  .h3 {
+    font-size: 1.5em;
+    font-weight: bold;
+    /* color: #555; */
+    color:var(--primary-color)
+
+  }
+  
+  .h4 {
+    font-size: 1.25em;
+    font-weight: bold;
+    /* color: #666; */
+    color:var(--primary-color)
+
+  }
+  
+  .h5 {
+    font-size: 1em;
+    font-weight: bold;
+    /* color: #777; */
+    color:var(--primary-color)
+
+  }
+  
+  .h6 {
+    font-size: 0.875em;
+    font-weight: bold;
+    /* color: #888; */
+    color:var(--primary-color)
+  }
+  .dark-mode .h1,
+  .dark-mode .h2,
+  .dark-mode .h3,
+  .dark-mode .h4,
+  .dark-mode .h5,
+  .dark-mode .h6
+  {
+    color: #cfd3ec;
+  }

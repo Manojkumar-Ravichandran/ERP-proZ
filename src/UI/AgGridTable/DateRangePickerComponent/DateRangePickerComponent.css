@@ -1,0 +1,84 @@
+.DateInput_input {
+    font-size: 14px;
+    line-height: 2px;
+    background-color: unset;
+}
+
+.DateRangePickerInput__withBorder {
+    border-radius: 2px;
+    border: 1px solid #dbdbdb;
+}
+
+.DateInput {
+    width: 104px;
+    background-color: unset;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.DateInput input::placeholder {
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.DateRangePickerInput {
+    background-color: white;
+}
+
+.DateRangePickerInput_calendarIcon {
+    padding: 0px;
+}
+
+.DateRangePickerInput_arrow_svg {
+    height: 16px;
+    width: 16px;
+}
+
+.DateRangePicker_picker {
+    z-index: 3;
+}
+
+.CalendarDay__selected,
+.CalendarDay__selected:active,
+.CalendarDay__selected:hover,
+.CalendarDay__selected_span {
+    background: var(--primary-color);
+    border: 1px double var(--primary-color);
+    color: #fff;
+}
+
+.CalendarDay__selected_span:active,
+.CalendarDay__selected_span:hover,
+.CalendarDay__selected_span {
+    background: var(--primary-color);
+    border: 1px double var(--primary-color);
+    color: #fff;
+    opacity: 0.5;
+}
+.DateRangePicker_picker{
+    background-color: transparent;
+}
+.DayPicker__withBorder {
+    left: 0pc;
+}
+@media (max-width:1230px) {
+    .DateInput {
+        width: 90px;
+    }
+
+    .DateInput_input {
+        padding: 11px 2px 9px;
+    }
+    .max-w-md {
+        max-width: 13rem;
+    }
+}
+@media (max-width:1100px) {
+    .DateInput {
+        width: 60px;
+    }
+    .DateInput_input {
+        padding: 11px 0px 9px;
+        font-size: 10px;
+    }
+}

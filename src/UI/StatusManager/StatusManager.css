@@ -1,0 +1,93 @@
+.status-manager {
+    padding: 0px 16px;
+    border-radius: 20px !important;
+    color: white;
+    width: min-content !important;
+    font-size: 12px !important;
+    line-height: 2.2;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-red {
+    background-color: #fce4e4 !important;
+    border-color: #fce4e4 !important;
+    color: #842029 !important;
+}
+
+.status-green {
+    background-color: #d1e7dd;
+    border-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-yellow {
+    background-color: #fff3cd;
+    border-color: #fff3cd;
+    color: #664d03;
+}
+
+.status-blue {
+    background-color: #cff4fc;
+    border-color: #cff4fc;
+    color: #055160;
+}
+.status-orange {
+    background-color: #f6ead6;
+    border-color: #f6ead6;
+    color: #E65100;
+}
+.status-purple {
+    background-color: #f3e8ff;
+    border-color: #c084fc;
+    color: #6b21a8;
+}
+.status-gray {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+    color: #1f2937;
+}
+.status-pink {
+    background-color: #fce7f3;
+    border-color: #f472b6;
+    color: #9d174d;
+}
+.status-purple{
+    background-color: #edebfe;
+    color: #5521b5;
+    border-color: #edebfe;
+}
+.status-darkred{
+background-color: red;
+color: white;
+}
+.status-darkorange{
+background-color: #F58220;
+color: white;
+}
+.status-darkgreen{
+background-color: #4CAF50;
+color: white;
+}
+.status-darkblue{
+background-color: #3B82F6;
+color: white;
+}
+
+.status-darkpurple{
+    background-color:   #F9FCC8;
+    color: #2C2C2C;
+}
+
+.status-darkpink{
+    background-color:   #FFC9C9;
+    color: #2C2C2C;
+}
+
+.status-lightgreen{
+    background-color:   #D4F8D3;
+    color: #2C2C2C;
+}
+

@@ -1,0 +1,35 @@
+.export-button {
+    padding: 8px 16px;
+    /* background-color: var(--primary-color); */
+    /* color: white; */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+    /* transition: background-color 0.3s ease;
+    opacity: .8; */
+    color: color-mix(in srgb, var(--primary-color) 90%, black); 
+    background-color: color-mix(in srgb, var(--primary-color) 30%, transparent); 
+}
+
+.export-button:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.dropdown-item {
+    width: 100%;
+    padding: 8px;
+    color: #858291;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+@media (max-width:1020px) {
+    .export-button {
+        font-size: 12px;
+    }
+}

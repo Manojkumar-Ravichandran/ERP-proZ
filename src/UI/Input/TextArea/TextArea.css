@@ -1,0 +1,30 @@
+  .form-textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical; 
+    /* margin-top: 4px; */
+  }
+  
+  /* .form-textarea[aria-invalid="true"] {
+    border-color: red;
+  } */
+  
+  .error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 0.25rem;
+  }
+  .form-textarea:focus-visible {
+    outline: 1px solid var(--primary-color);
+    border: unset;
+  }
+  label{
+    color: #666;
+    font-size: 14px; 
+  font-weight: 500;
+  gap: 4px; 
+display: flex;
+align-items: center;
+}

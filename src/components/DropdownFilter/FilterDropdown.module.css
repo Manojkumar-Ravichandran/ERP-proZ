@@ -1,0 +1,18 @@
+  .dropdown-item {
+      background-color: #fff; /* Default background color */
+      transition: background-color 0.2s ease, color 0.2s ease;
+      @apply text-secondary-400 
+    }
+    
+    .dropdown-item:hover {
+      color: #fff; /* Hover text color */
+    background-color: color-mix(in srgb, var(--primary-color) 30%, transparent); 
+      /* @apply bg-secondary-400 text-secondary-800 */
+    }
+    .dropdownContainer{
+      background-color: #fff;
+      max-height: 40vh;
+      overflow-y: scroll;
+    }
+    
+  

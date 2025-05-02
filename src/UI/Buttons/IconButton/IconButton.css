@@ -1,0 +1,47 @@
+.button__btn {
+    display: inline-flex;
+    align-items: center;
+    color:var(--white);
+    padding:.5rem 1rem;
+    border-radius: .25rem;
+    margin: .5rem 0;
+    font-weight: 500;
+    justify-content: center;
+}
+.button__btn:disabled{
+  opacity: .6;
+  cursor: not-allowed;
+}
+@media (max-width:1020px) {
+    .button__btn{
+    font-size: 12px;
+    }
+}
+
+  .button__icon {
+    width: 1em; /* Icon size */
+    height: 1em;
+  }
+  
+  .mr-2 {
+    margin-right: 0.5rem;
+  }
+  
+  .ml-2 {
+    margin-left: 0.5rem;
+  }
+
+  .button__btn.btn_cancel{
+    @apply bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none;
+  }
+
+  .light_btn{
+    border: 1px solid var(--primary-color);
+    padding: 4px 16px;
+    border-radius: 4px;
+    color: var(--primary-color) !important; 
+    background-color: color-mix(in srgb, var(--primary-color) 15%, transparent); 
+    display: flex;
+    align-items: center;
+  }
+  

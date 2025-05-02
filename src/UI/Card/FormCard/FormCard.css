@@ -1,0 +1,31 @@
+.card {
+    border-radius: 8px;
+    padding: 16px;
+    /* max-width: 50%; */
+    box-shadow: 0 0.25rem 1.125rem rgba(75, 70, 92, 0.1);
+    margin-bottom: 8px;
+    background-clip: padding-box;
+  }
+  
+  .card__image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .card__title {
+    font-weight: bold;
+    padding: 6px 0 16px;
+    margin-bottom: 10px;
+    border-bottom:1px solid rgba(223, 223, 223, 0.867) ;
+  }
+  
+  .card__content {
+    margin: 8px 0;
+  }
+  
+  .card__footer {
+    margin-top: 16px;
+    text-align: right;
+  }
+  

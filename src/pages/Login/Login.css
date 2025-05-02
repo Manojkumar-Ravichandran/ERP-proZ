@@ -1,0 +1,23 @@
+.login__page{
+    height: 95vh;
+    position: relative;
+ 
+}
+.login__page__container{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+}
+.login__container{
+    width: 350px;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: -4px 1px 6px 3px #afafaf6d;
+
+}
+.login__page .login__logo-container img{
+    width: 3rem;
+}

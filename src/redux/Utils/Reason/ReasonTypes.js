@@ -1,0 +1,10 @@
+export const REASON_CREATE = "REASON_CREATE";
+export const REASON_UPDATE = "REASON_UPDATE";
+export const REASON_FETCH = "REASON_FETCH";
+export const REASON_SUCCESS = "REASON_SUCCESS";
+export const REASON_FAILURE = "REASON_FAILURE";
+export const REASON_DELETE = "REASON_DELETE";
+
+
+
+

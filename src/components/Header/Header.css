@@ -1,0 +1,6 @@
+header.header{    
+    display: block;
+    background-color: var(--white);
+    padding: 1rem;
+
+}

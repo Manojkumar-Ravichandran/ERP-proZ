@@ -1,0 +1,54 @@
+.tabs-pills-container {
+    background-color: white;
+    border-radius: 8px;
+}
+.tabs-pills-header {
+    display: flex;
+    border-bottom: 1px solid #dbdade;
+    margin-bottom: 1rem;
+    color: #858291;
+}
+/* Tab/Pill button styles */
+.tab-pill {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-align: center;
+    font-size: 1rem;
+    border: none;
+    background: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+.tab-pill:hover ,.tab-pill.active:hover {
+    color: white;
+    background-color: var(--primary-color) !important;
+    /* border-bottom: 2px solid var(--primary-color) !important; */
+    font-weight: 600;
+    border-radius: 8px !important;
+}
+/* Active state */
+.tab-pill.active {
+    color: white;
+    background-color: var(--primary-color) !important;
+    border-radius: 8px !important;
+    /* border-bottom: 2px solid var(--primary-color); */
+    font-weight: 600;
+}
+
+.tabs-pills-container.tabs .tab-pill {
+    border-radius: 0;
+}
+
+.tabs-pills-container.pills .tab-pill {
+    margin: 0 0.25rem;
+    border-radius: 20px;
+}
+
+.tab-pill:hover:not(.active) {
+    background-color: #eee;
+}
+
+.tabs-pills-content {
+    color: #858291;
+    font-size: 15px;
+}

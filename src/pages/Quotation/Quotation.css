@@ -1,0 +1,58 @@
+table.item-list__table{
+    /* width: 100%; */
+}
+table.item-list__table, .item-list__table td,.item-list__table th{
+    border:1px solid var(--white--50);
+
+}
+
+
+table.item-list__table td, table.item-list__table th{
+    width: 100%;
+    padding: 1rem;
+    font-size: var(--text--sm); 
+    text-align: center;
+
+}
+table.item-list__table tr:nth-child(even){
+    background-color: var(--white--10);
+}
+
+.item-list__table thead th{
+    color: var(--primary--500);
+    /* background: var(--white--50); */
+}
+
+.darkCardBg table.item-list__table tr:nth-child(even){
+    background-color: inherit;
+}
+
+.dark-mode table.item-list__table select{
+    background-color: #2f3349;
+}
+
+.width-3-4{
+    width: 70%;
+}
+
+
+.item-list__table__container {
+    max-width: calc(100vw - 150px);;
+
+    /* max-width: 80%; */
+    overflow-x: scroll; 
+    scroll-behavior: smooth;
+    scrollbar-width: 3px;
+    display: block; /* Ensure block display for scrolling */
+    white-space: nowrap;
+    scrollbar-width:thin;
+    
+}
+.item-list__table__container::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+    background-color: #aaa; /* or add it to the track */
+}
+.item-list__table__container::-webkit-scrollbar {
+    background: #000;
+}

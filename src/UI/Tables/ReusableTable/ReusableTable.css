@@ -1,0 +1,21 @@
+.reusable-table {
+    border-radius: 8px;
+    border-collapse: separate !important;
+    border-spacing: 0; /* This helps spacing when not collapsed */
+    overflow: hidden;
+  }
+  
+  .reusable-table thead tr:first-child th:first-child {
+    border-top-left-radius: 8px;
+  }
+  .reusable-table thead tr:first-child th:last-child {
+    border-top-right-radius: 8px;
+  }
+  
+  .reusable-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+  }
+  .reusable-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+  }
+  
