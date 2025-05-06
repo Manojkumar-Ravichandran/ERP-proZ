@@ -131,7 +131,7 @@ const CreateAccountsMaster = ({ isCreateModal, setIsCreateModal, onClose, setToa
 
     return (
         <>
-            <Modal
+            <Modal  
                 isOpen={isCreateModal}
                 onClose={() => { setIsCreateModal(false); onClose() }}
                 title={IsUpdate ? "Update Master data" : "Create Master Data "}

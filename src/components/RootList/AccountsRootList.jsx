@@ -8,8 +8,7 @@ import Debit from "../../pages/Accounts/Transaction/Debit/Debit";
 import Expense from "../../pages/Accounts/Transaction/Expense/Expense";
 import TransactionList from "../../pages/Accounts/TransactionMaster/TransactionList";
 import AccountsList from "../../pages/Accounts/AccountsMaster/AccountsList";
-import MajorHead from "../../pages/Accounts/Account/MajorHead/MajorHead";
-import SubHead from "../../pages/Accounts/Account/SubHead/SubHead";
+import MajorandSubHead from "../../pages/Accounts/Account/MajorandSubHead";
 
 const CreatePurchaseQuotation = lazy(() => import("../../pages/Accounts/Purchase/PurchaseQuotation/CreatePurchaseQuotation"));
 const PurchaseOrder = lazy(() => import("../../pages/Accounts/Purchase/PurchaseOrder/PurchaseOrder"));
@@ -139,17 +138,23 @@ export const AccountsRootList = {
             path: "transactions-master",
             element: <TransactionList />,
         },        
+        // {
+                
+        //     index: true,
+        //     path: "account/subhead",
+        //     element: <SubHead />,
+        // },        
+        // {
+                
+        //     index: true,
+        //     path: "account/majorhead",
+        //     element: <MajorHead />,
+        // },        
         {
                 
             index: true,
-            path: "account/subhead",
-            element: <SubHead />,
-        },        
-        {
-                
-            index: true,
-            path: "account/majorhead",
-            element: <MajorHead />,
+            path: "account/major&subheads",
+            element: <MajorandSubHead />,
         },        
         {
                 
@@ -198,8 +203,9 @@ export const AccountsNavList = {
             title: "Accounts", 
             id: "accounts", 
             submenu: [
-                { title: "Major Head", id: "majorhead", to: "/user/accounts/account/majorhead" },
-                { title: "Sub Head", id: "subhead", to: "/user/accounts/account/subhead" },
+                // { title: "Major Head", id: "majorhead", to: "/user/accounts/account/majorhead" },
+                // { title: "Sub Head", id: "subhead", to: "/user/accounts/account/subhead" },
+                { title: "Major & SubHead", id: "heads", to: "/user/accounts/account/major&subheads" },
             ]
         },
         { title: "Accounts Master", id: "accounts-master", to: "/user/accounts/accounts-master" },
