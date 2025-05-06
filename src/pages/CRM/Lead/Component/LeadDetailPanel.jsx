@@ -19,6 +19,7 @@ import { referralList } from "../../../../contents/DropdownList";
 export default function LeadDetailPanel() {
   const leadDetails = useSelector((state) => state?.lead?.leadDetail?.data);
   const [leadDetail, setLeadDetail] = useState();
+  
 const [refenece,setReference ]=useState()
   useEffect(() => {
     setLeadDetail(leadDetails);
@@ -122,17 +123,24 @@ const [refenece,setReference ]=useState()
           <div className="mt-2 bg-l bg-white-400  rounded-2xl	">
             <div className="p-3">
               <IconWithInfo
-                icon={<Product />}
+                icon={React.cloneElement(icons.materialToolIcon)}
                 iconClassName="top-clr"
                 label="Product Name:"
+                info={leadDetail?.material_details_name || " "}
+                className="border-b"
+              />
+               <IconWithInfo
+                icon={React.cloneElement(icons.roofIcon)}
+                iconClassName="top-clr"
+                label="Roofing Type:"
                 info={leadDetail?.product_name || " "}
                 className="border-b"
               />
                <IconWithInfo
-                icon={<Product />}
+                icon={React.cloneElement(icons.projectIcon)}
                 iconClassName="top-clr"
-                label="Product Name:"
-                info={leadDetail?.product_name || " "}
+                label="Purpose:"
+                info={leadDetail?.lead_purpose_name || " "}
                 className="border-b"
               />
             </div>
@@ -211,19 +219,20 @@ const [refenece,setReference ]=useState()
        
         <div className="incharge__container mt-1">
           <ViewHeadingContainer
-            title="Primary Incharge"
+            title="Incharge"
             editIcon={<InchargeDetailEditForm leadData={leadDetails}/>}
           />
           <div className="pt-2 flex items-center gap-2">
             <ProfileCircle
-              letter={findFirstLetter(leadDetail?.incharge_name, 2)}
+              letter={findFirstLetter(leadDetail?.sec_incharge_name, 2)}
             />
             <span className="text-lg font-semibold">
-              {leadDetail?.incharge_name}
+              {leadDetail?.sec_incharge_name}
             </span>
           </div>
         </div>
         {/* secondry in charge */}
+        {/* {leadDetail?.sec_incharge_name != null && (
         <div className="incharge__container mt-1">
           <ViewHeadingContainer
             title="Secondary Incharge"
@@ -238,6 +247,7 @@ const [refenece,setReference ]=useState()
             </span>
           </div>
         </div>
+        )} */}
         <div className="reference__container mt-7">
         <ViewHeadingContainer
             title="Reference Details"

@@ -1,0 +1,62 @@
+const StaticAccountsData = [
+    { type: "liability", natureofaccount: "Capital", majorHead: "Shareholders Fund", subHead: "", depreciation: "Not Applicable",tds: "No" },
+    { type: "liability", natureofaccount: "Reserves & Surplus", majorHead: "Shareholders Fund", subHead: "", depreciation: "Not Applicable",tds: "No" },
+    { type: "liability", natureofaccount: "Current Account", majorHead: "Shareholders Fund", depreciation: "Not Applicable",tds: "No" },
+    { type: "liability", uuid:50, natureofaccount: "Sundry Creditors - Purchase", majorHead: "Current Liability", subHead: "Sundry Creditors", depreciation: "Not Applicable" },
+    { type: "liability", natureofaccount: "Sundry Creditors - Expenses", majorHead: "Current Liability", subHead: "Sundry Creditors", depreciation: "Not Applicable" },
+    { type: "liability", natureofaccount: "Duties & Taxes", majorHead: "Current Liability", subHead: "GST - Liability/Payable", depreciation: "Not Applicable" },
+    { type: "liability", natureofaccount: "Duties & Taxes", majorHead: "Current Liability", subHead: "TDS & TDS", depreciation: "Not Applicable" },
+    { type: "liability", natureofaccount: "Duties & Taxes", majorHead: "Current Liability", subHead: "Professional Taxes", depreciation: "Not Applicable" },
+    { type: "liability", natureofaccount: "Duties & Taxes", majorHead: "Current Liability", subHead: "ESI & PF", depreciation: "Not Applicable" },
+    { type: "liability", natureofaccount: "Provisions", majorHead: "Current Liability", subHead: "Provisions", depreciation: "Not Applicable" },
+    { type: "liability", natureofaccount: "Credit Card", majorHead: "Current Liability", subHead: "Unsecured Loan", depreciation: "Not Applicable" },
+    { type: "liability", natureofaccount: "Any other Unsecured Loan", majorHead: "Current Liability", subHead: "Unsecured Loan", depreciation: "Not Applicable" },
+    { type: "liability", natureofaccount: "Bank -OD-Secured", majorHead: "Loans", subHead: "Secured Loans", depreciation: "Not Applicable" },
+    { type: "liability", natureofaccount: "Bank - Term Loan", majorHead: "Loans", subHead: "Secured Loans", depreciation: "Not Applicable" },
+
+    { type: "Assets", natureofaccount: "Land", majorHead: "Fixed Assets", subHead: "Land & Buildings", depreciation: "Not Applicable" },
+    { type: "Assets", natureofaccount: "Buildings", majorHead: "Fixed Assets", subHead: "Land & Buildings", depreciation: "Applicable" },
+    { type: "Assets", natureofaccount: "All Vehicles", majorHead: "Fixed Assets", subHead: "Vehicles", depreciation: "Applicable" },
+    { type: "Assets", natureofaccount: "Machineries", majorHead: "Fixed Assets", subHead: "Machineries", depreciation: "Applicable" },
+    { type: "Assets", natureofaccount: "Inventory - Raw Material", majorHead: "Current Assets", subHead: "Current Assets", depreciation: "Applicable in different way" },
+    { type: "Assets", natureofaccount: "Inventory - Finished Goods", majorHead: "Current Assets", subHead: "Current Assets", depreciation: "Applicable in different way" },
+    { type: "Assets", natureofaccount: "Cash", majorHead: "Current Assets", subHead: "Current Assets", depreciation: "Not Applicable" },
+    { type: "Assets", natureofaccount: "Bank", majorHead: "Current Assets", subHead: "Current Assets", depreciation: "Not Applicable" },
+    { type: "Assets", natureofaccount: "Sundry Debtors", majorHead: "Current Assets", subHead: "Current Assets", depreciation: "Not Applicable" },
+    { type: "Assets", natureofaccount: "Investment-Short Term", majorHead: "Current Assets", subHead: "Current Assets", depreciation: "Not Applicable" },
+    { type: "Assets", natureofaccount: "Investment-Long Term", majorHead: "Non Current Assets", subHead: "Non Current Assets", depreciation: "Not Applicable" },
+    { type: "Assets", natureofaccount: "Deposits - Long Term", majorHead: "Current Assets", subHead: "Current Assets", depreciation: "Not Applicable" },
+    { type: "Assets", natureofaccount: "Deposits - Short Term", majorHead: "Non Current Assets", subHead: "Non Current Assets", depreciation: "Not Applicable" },
+    { type: "Assets", natureofaccount: "TDS & TCS receivables", majorHead: "Current Assets", subHead: "Current Assets", depreciation: "Not Applicable" },
+  
+    { type: "Expenses", natureofaccount: "Purchase", majorHead: "Direct Expenses", subHead: "Direct Expenses", depreciation: "" },
+    { type: "Expenses", natureofaccount: "Labour - Direct", majorHead: "Direct Expenses", subHead: "Direct Expenses", depreciation: "" },
+    { type: "Expenses", natureofaccount: "Labour - InDirect", majorHead: "In-Direct Expenses", subHead: "In-Direct Expenses", depreciation: "" },
+    { type: "Expenses", natureofaccount: "Freight - Direct", majorHead: "Direct Expenses", subHead: "Direct Expenses", depreciation: "" },
+    { type: "Expenses", natureofaccount: "Freight -In Direct", majorHead: "In-Direct Expenses", subHead: "Selling & Distribution", depreciation: "" },
+    { type: "Expenses", natureofaccount: "Audit & Accounting Fees", majorHead: "In-Direct Expenses", subHead: "Admin Expenses", depreciation: "" },
+    { type: "Expenses", natureofaccount: "ElectricityCharges", majorHead: "In-Direct Expenses", subHead: "Admin Expenses", depreciation: "" },
+    { type: "Expenses", natureofaccount: "OfficeRental", majorHead: "In-Direct Expenses", subHead: "Admin Expenses", depreciation: "" },
+    { type: "Expenses", natureofaccount: "Printing&Stationery", majorHead: "In-Direct Expenses", subHead: "Admin Expenses", depreciation: "" },
+    { type: "Expenses", natureofaccount: "Salary&Bonus", majorHead: "In-Direct Expenses", subHead: "Employee Cost", depreciation: "" },
+    { type: "Expenses", natureofaccount: "StaffWelfare", majorHead: "In-Direct Expenses", subHead: "Employee Cost", depreciation: "" },
+    { type: "Expenses", natureofaccount: "BankCharges", majorHead: "In-Direct Expenses", subHead: "Financial Chages", depreciation: "" },
+    { type: "Expenses", natureofaccount: "ODInterest", majorHead: "In-Direct Expenses", subHead: "Financial Chages", depreciation: "" },
+    { type: "Expenses", natureofaccount: "TermLoanInterest", majorHead: "In-Direct Expenses", subHead: "Financial Chages", depreciation: "" },
+    { type: "Expenses", natureofaccount: "VehicleLoanInterest", majorHead: "In-Direct Expenses", subHead: "Financial Chages", depreciation: "" },
+    { type: "Expenses", natureofaccount: "UnsecuredLoanInterest", majorHead: "In-Direct Expenses", subHead: "Financial Chages", depreciation: "" },
+    { type: "Expenses", natureofaccount: "Advertising", majorHead: "In-Direct Expenses", subHead: "Selling & Distribution", depreciation: "" },
+    { type: "Expenses", natureofaccount: "OutwardFreight", majorHead: "In-Direct Expenses", subHead: "Selling & Distribution", depreciation: "" },
+    { type: "Expenses", natureofaccount: "MarketingCharges", majorHead: "In-Direct Expenses", subHead: "Selling & Distribution", depreciation: "" },
+    { type: "Expenses", natureofaccount: "WarehouseRental", majorHead: "In-Direct Expenses", subHead: "Selling & Distribution", depreciation: "" },
+    { type: "Expenses", natureofaccount: "TravellingCharges", majorHead: "In-Direct Expenses", subHead: "Selling & Distribution", depreciation: "" },
+  
+    { type: "Income", natureofaccount: "Income Related to Business", majorHead: "Direct Income", subHead: "Direct Income", depreciation: "" },
+    { type: "Income", natureofaccount: "Income not Related to Business", majorHead: "In-Direct Incomes", subHead: "In-Direct Income", depreciation: "" },
+
+    { type: "Others", natureofaccount: "Others", majorHead: "Others", subHead: "Others", depreciation: "" }
+    
+  ];
+  
+  export default StaticAccountsData;
+  

@@ -13,6 +13,8 @@ import { priorityData } from "../../../contents/CRM/CRM";
 import { getEmployeeListEffect } from "../../../redux/common/CommonEffects";
 import { addTaskListEffect } from "../../../redux/CRM/Task/TaskEffect";
 import AlertNotification from "../../../UI/AlertNotification/AlertNotification";
+import MultiSearchableSelect from "../../../UI/Select/MultiSelector";
+import MultiSelect from "../../../UI/Select/MultiSelect";
 
 export default function AssignTask() {
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
@@ -126,16 +128,32 @@ export default function AssignTask() {
             />
             <Select
               options={employeeList}
-              label="Assign To"
-              id="assigned_to"
-              placeholder="Select Assignee"
+              label="Manager"
+              id="assigned_manager"
+              placeholder="Select Manager"
               iconLabel={React.cloneElement(icons.TbUserCheck, {
                 size: 20,
               })}
               register={register}
               errors={errors}
-              validation={{ required: "Assignee is required" }}
+              validation={{ required: "Manager is required" }}
             />
+            <div className="col-span-2">
+              <MultiSelect
+                id="assigned_to"
+                label="Assign To"
+                placeholder="Select Assignees"
+                options={employeeList}
+                register={register}
+                value={[]}
+                errors={errors}
+                isMulti={true}
+                onChange={(selectedValues)=>{
+                  setValue("assigned_to", selectedValues);
+                }}
+              />
+            </div>
+            
             <div className="col-span-2">
               <TextArea
                 id="description"

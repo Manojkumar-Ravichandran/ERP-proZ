@@ -8,7 +8,7 @@ import TextArea from "../../../../UI/Input/TextArea/TextArea";
 import IconOnlyBtn from "../../../../UI/Buttons/IconOnlyBtn/IconOnlyBtn";
 import icons from "../../../../contents/Icons";
 import { localityList } from "../../../../contents/DropdownList";
-import { getAllDistrictListEffect, getAllItemListEffect, getAllUnitListEffect } from "../../../../redux/common/CommonEffects";
+import { getAllDistrictListEffect, getAllItemListEffect, getAllProductListEffect, getAllUnitListEffect, getLeadPurposeEffect, getMaterialDetailEffect } from "../../../../redux/common/CommonEffects";
 import { validationPatterns } from "../../../../utils/Validation";
 import IconButton from "../../../../UI/Buttons/IconButton/IconButton";
 import SearchableSelect from "../../../../UI/Select/SearchableSel";
@@ -16,22 +16,29 @@ import Select from "../../../../UI/Select/SingleSelect";
 import { LeadProductEffect } from "../../../../redux/CRM/lead/LeadEffects";
 import { setLeadDetailInprogress } from "../../../../redux/CRM/lead/LeadActions";
 import AlertNotification from "../../../../UI/AlertNotification/AlertNotification";
+import SearchableSelector from "../../../../UI/Select/selectBox";
 
 export default function EditOtherDetails({leadData}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [districtList, setDistrictList] = useState([]);
   const [unitList, setUnitList] = useState([]);
+  const [materialList, setMaterialList] = useState([]);
+  const [roofList, setRoofList] = useState([]);
+  const [purpose, setPurpose] = useState([]);
   const [referenceType, setReferenceType] = useState("employee");
   const [itemList, setItemList] = useState([]);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [toastData, setToastData] = useState();
-
+  const [selected, setSelected] = useState();
+  
   const toastOnclose = useCallback(() => {
     setToastData({ ...toastData, show: false });
   }, [toastData]);
 
   const leadDetail = useSelector((state) => state?.lead?.leadDetail?.data);
+  console.log("leadDetail-->",leadDetail);
+  
   const referralList = [
     { value: "social_media", label: "Social Media" },
     { value: "employee", label: "Employee" },
@@ -49,8 +56,10 @@ export default function EditOtherDetails({leadData}) {
   // Fetch district list when the component mounts
   useEffect(() => {
     if (leadDetail) {
-      //reset(leadDetail); // Reset form with default lead details
-      setValue("product_name", leadDetail.product_name || 12);
+      reset(leadDetail); // Reset form with default lead details
+      setValue("product_name", leadDetail.material_details || "");
+      setValue("roofing_type", leadDetail.product_name || 6);
+      setValue("purpose", leadDetail.lead_purpose || 24);
       setValue("unit", leadDetail.unit || "16");
   
       if (leadDetail.width) setValue("width", leadDetail.width ||7);
@@ -60,13 +69,25 @@ export default function EditOtherDetails({leadData}) {
   }, [leadDetail, reset, setValue]);
 
   useEffect(()=>{
-    if(selectedItem){
-      const selectedItemData = itemList?.filter(e=>e.value ==selectedItem);
-      setValue("unit",3)
+    if (selectedItem && itemList.length) {
+      const selectedItemData = itemList.find((e) => e.value === selectedItem);
+      if (selectedItemData?.unit) {
+        setValue("unit", selectedItemData.unit);
+      }
     }
   },[itemList, selectedItem, setValue])
   useEffect(() => {
       (async () => {
+        try {
+          let { data } = await getMaterialDetailEffect();
+          data = data.data.map((list) => ({
+            label: list.name,
+            value: list.id,
+          }));
+          setMaterialList(data);
+        } catch (error) {
+          setMaterialList([]);
+        }
         try {
           let { data } = await getAllUnitListEffect();
           data = data.data.map((list) => ({
@@ -77,9 +98,28 @@ export default function EditOtherDetails({leadData}) {
         } catch (error) {
           setUnitList([]);
         }
-      })();
-    }
-  , []);
+      try {
+        let { data } = await getAllProductListEffect();
+          data = data.data.map((list) => ({
+            label: list.product_name,
+            value: list.id,
+          }));
+          setRoofList(data);
+      } catch (error) {
+        setRoofList([]);
+      }
+      try {
+        let { data } = await getLeadPurposeEffect();
+          data = data.data.map((list) => ({
+            label: list.name,
+            value: list.id,
+          }));
+          setPurpose(data);
+      } catch (error) {
+        setPurpose([]);
+      }
+    })();
+    }, []);
   useEffect(() => {
     // if (itemList.length === 0) {
       (async () => {
@@ -107,7 +147,34 @@ export default function EditOtherDetails({leadData}) {
     setDistrictList(formattedDistricts);
   };
 
-  const handleModalOpen = () => setIsModalOpen(true);
+  // const handleModalOpen = () => setIsModalOpen(true);
+  const handleModalOpen = () => {
+    const waitForOptions = () => {
+      const allLoaded =
+        materialList.length &&
+        roofList.length &&
+        unitList.length &&
+        purpose.length;
+  
+      if (allLoaded && leadDetail) {
+        setValue("product_name", leadDetail.material_details || "");
+        setValue("roofing_type", leadDetail.product_name || "");
+        setValue("purpose", leadDetail.lead_purpose || "");
+        setValue("unit", leadDetail.unit || "");
+        setValue("width", leadDetail.width || "");
+        setValue("length", leadDetail.length || "");
+        setValue("height", leadDetail.height || "");
+        setValue("lead_value", leadDetail.lead_value || "");
+        reset(); // This will sync the state properly
+        setIsModalOpen(true);
+      } else {
+        setTimeout(waitForOptions, 100); // retry after delay
+      }
+    };
+  
+    waitForOptions();
+  };
+  
   const handleModalClose = () => setIsModalOpen(false);
 
   const onSubmits = async(data) => {
@@ -148,6 +215,15 @@ export default function EditOtherDetails({leadData}) {
   const handleReferenceTypeChange = (selectedOption) => {
     setReferenceType(selectedOption.value); // Update the state
   };
+  const handleSelection = (selected) => {
+    setSelected(selected);
+
+    // Update form fields with lead's address data if available
+    if (selected) {
+      setValue("product_name", leadDetail.material_details || "");
+      setValue("roofing_type", leadDetail.product_name || ""); 
+    }
+};
   return (
     <>
     {toastData?.show && (
@@ -176,11 +252,29 @@ export default function EditOtherDetails({leadData}) {
       >
         <form onSubmit={handleSubmit(onSubmits)}>
           <div className="grid  gap-2">
-            <SearchableSelect
-               options={itemList}
+
+          <SearchableSelector
+                errors={errors}
+                label="Product Name"
+                id="product_name"
+                iconLabel={icons.materialToolIcon}
+                options={materialList}
+                placeholder="Enter Product Name"
+                onChange={handleSelection}
+                // error={false}
+                searchable={true}
+                // defaultValue={selectedVendor}
+                register={register}
+                validation={{ required: false}}
+                setValue={setValue}
+                defaultid={watch('product_name')}                                            // defaultValue={vendorList?.find((vendor) => vendor?.value === watch('vendor'))} // Match the value
+                // defaultValue={watch('product_name')} // Match the value)} // Match the value
+            />
+            {/* <Select
+               options={materialList}
                label="Product Name"
                id="product_name"
-               iconLabel={icons.roofIcon}
+               iconLabel={icons.materialToolIcon}
                placeholder="Enter Product Name "
                register={register}
                validation={{
@@ -189,8 +283,34 @@ export default function EditOtherDetails({leadData}) {
                marginClass="mb-1"
                showStar={false}
                errors={errors}
+              //  watch={watch}
+               value={watch("product_name")}
                setValue={setValue}
-            />
+            /> */}
+            <Select
+                  options={roofList}
+                  label="Roofing Type"
+                  id="roofing_type"
+                  iconLabel={icons.roofIcon}
+                  placeholder="Select Roofing Type"
+                  register={register}
+                  validation={{ required: "Roofing Type is Required" }}
+                  errors={errors}
+                  setValue={setValue}
+                  value={watch("roofing_type")}
+                />
+            <Select
+                  options={purpose}
+                  label="Purpose"
+                  id="purpose"
+                  iconLabel={icons.projectIcon}
+                  placeholder="Select purpose"
+                  register={register}
+                  validation={{ required: "Purpose is Required" }}
+                  errors={errors}
+                  setValue={setValue}
+                  value={watch("purpose")}
+                />
             <SearchableSelect
                   options={unitList}
                   label="Unit"
@@ -201,6 +321,7 @@ export default function EditOtherDetails({leadData}) {
                   validation={{ required: "Unit is Required" }}
                   errors={errors}
                   setValue={setValue}
+                  watch={watch}
                 />
 
             <FormInput
