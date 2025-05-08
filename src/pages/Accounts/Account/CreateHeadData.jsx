@@ -3,9 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "../../../UI/Modal/Modal";
 import FormInput from "../../../UI/Input/FormInput/FormInput";
-import { getTransactionMatsterCreateEffect, getTransactionMatsterUpdateEffect } from "../../../redux/Account/Transactions/Transaction";
 import SearchableSelector from "../../../UI/Select/selectBox";
-import StaticAccountsData from "../AccountsMaster/StaticAccountsData";
+import { createMajorHeadEffect, createSubHeadEffect, getMajorHeadDropdownEffect, getMajorHeadEffect, getMajorHeadListEffect, getNatureOfAccountDropdownEffect, getSubHeadDropdownEffect, updateMajorHeadEffect } from "../../../redux/Account/Accounts/AccountsEffects";
 const CreateHeadsData = ({ isCreateModal, setIsCreateModal, onClose, setToastData, IsUpdate = false,
     data = null, }) => {
         
@@ -14,75 +13,156 @@ const CreateHeadsData = ({ isCreateModal, setIsCreateModal, onClose, setToastDat
         formState: { errors },
         handleSubmit,
         reset,
+        watch,
         setValue,
     } = useForm();
     
+    // useEffect(() => {
+    //     if (IsUpdate && data) {
+    //     const type = data.headType || "major";
+    //     // const name = type === "major" ? data.majorHead : data.subHead;
+
+    //     setHeadType(type);
+    //     setValue("uuid", data.uuid || "");
+    //     setValue("name", data.name || "");
+    //     setValue("section", data.section || "");
+    //     setValue("natureaccount", data.natureaccount || "");
+    //     }
+
+    //     else {
+    //         setHeadType(data?.headType || "major");
+    //         reset();
+    //     }
+    // }, [IsUpdate, data, setValue, reset]);
     useEffect(() => {
+        console.log("Data on useEffect:", data);
         if (IsUpdate && data) {
-        const type = data.headType || "major";
-        const name = type === "major" ? data.majorHead : data.subHead;
-
-        setHeadType(type);
-        setValue("uuid", data.uuid || "");
-        setValue("type", data.type || "");
-        setValue("name", name);
-
-            const options = StaticAccountsData
-            .map(item => ({
-                label: type === "major" ? item.majorHead : item.subHead,
-                value: type === "major" ? item.majorHead : item.subHead
-            }))
-            .filter(item => item.label);
-        setHeadOptions(options);
-        }
-        else if (!IsUpdate && data) {
-            setValue("uuid", "");
-            setValue("type", data.type || "");
-            setValue("sub", "");
-        }
-
-        else {
+            const type = data.headType || "major";
+            setHeadType(type);
+            console.log("Setting UUID:", data.uuid);
+            setValue("uuid", data.id || "");
+            setValue("section", data.section || "");
+            setValue("natureaccount", data.natureaccount || "");
+    
+            if (type === "major") {
+                setValue("name", data.name || "");
+            } else if (type === "sub") {
+                setValue("majorhead", data.majorhead || "");
+                setValue("name", data.name || "");
+            }
+    
+        } else {
+            setHeadType(data?.headType || "major");
             reset();
         }
     }, [IsUpdate, data, setValue, reset]);
+    
 
+    const [loading, setLoading] = useState(false);
     const [headType, setHeadType] = useState("major");
     const [headOptions, setHeadOptions] = useState([]);
+    const [natureOptions, setNatureOptions] = useState([]);
+    const [majorHeadOptions, setMajorHeadOptions] = useState([]);
+    const [sectionOptions, setSectionOptions] = useState([]);
 
+    useEffect(() => {
+        fetchDropdownOptions();
+    }, []);
 
+    const fetchDropdownOptions = async () => {
+        setLoading(true);
+        try {
+            const response = await getMajorHeadDropdownEffect({ section: "", natureaccount: "" });
+            console.log("getMajorHeadDropdownEffect",response);
+            
+            const sectionOptions = response?.data?.data?.map(item => ({
+                label: item.section,
+                value: item.section,
+            })) || [];
+            const natureOptions = response?.data?.data?.map(item => ({
+                label: item.natureaccount,
+                value: item.natureaccount,
+            })) || [];
+            setNatureOptions(natureOptions);
+            setSectionOptions(sectionOptions);
+        } catch (error) {
+            console.error("Error fetching nature of account options:", error);
+        } finally {
+            setLoading(false);
+        }
+        // for Sub head create dropdown
+        try {
+            const response = await getSubHeadDropdownEffect({ section: "", natureaccount: "", majorhead:""});
+            console.log("getSubHeadDropdownEffect",response);
+            
+            const majorHeadOptions = response?.data?.data?.map(item => ({
+                label: item.majorhead,
+                value: item.majorhead,
+            })) || [];
+            console.log("majorHeadOptions",majorHeadOptions);
+
+            setMajorHeadOptions(majorHeadOptions);
+        } catch (error) {
+            console.error("Error fetching nature of account options:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
     const submitFormHandler = async (data) => {
-        console.log("create sunb head",data);
+        console.log("create head",data);
         
         try {
             if (IsUpdate) {
                 const updatePayload = {
                     uuid: data.uuid, // Assuming `uuid` is part of the `data` object
-                    type: data.type,
-                    subHead: data.subHead,
+                    name: data.name,
                 };
-                const updateDebitResponse = await getTransactionMatsterUpdateEffect(updatePayload); // Call the update API
+                console.log("updatePayload",updatePayload);
+                
+                const response = await updateMajorHeadEffect(updatePayload); // Call the update API
+console.log("updateMajorHeadEffect",response);
 
-                if (updateDebitResponse?.success) {
+                if (response?.success) {
                     setToastData({
                         type: "success",
-                        message: "Master entry updated successfully",
+                        message: "MajorHead updated successfully",
                     });
                 } else {
-                    throw new Error(updateDebitResponse?.message || "Failed to update master entry");
+                    throw new Error(response?.message || "Failed to update MajorHead entry");
                 }
             } else {
-                // Create Debit API Call
+                
+                
+                if(headType === "major"){
+                    const createPayload = {
+                        name: data.name,
+                        section: data.section,
+                        natureaccount:data.natureaccount,
+                        is_edit: 1,
+                    };
+                    const majorResponse = await createMajorHeadEffect(createPayload); // Call the create API
+                    if (majorResponse?.success) {
+                        setToastData({
+                        type: "success",
+                        message: "MajorHead created successfully",
+                    });
+                 };
+                } else if (headType === "sub") {
                 const createPayload = {
-
                     name: data.name,
-                    type: data.type,
+                    section: data.section,
+                    natureaccount:data.natureaccount,
+                    is_edit: 1,
+                    majorhead:data.majorhead
                 };
-
-                await getTransactionMatsterCreateEffect(createPayload); // Call the create API
-                setToastData({
-                    type: "success",
-                    message: "Master entry created successfully",
-                });
+                const subResponse = await createSubHeadEffect(createPayload); // Call the create API
+                if (subResponse?.success) {
+                    setToastData({
+                        type: "success",
+                        message: "MajorHead created successfully",
+                    });
+                };
+            }
             }
 
             reset();
@@ -103,14 +183,12 @@ const CreateHeadsData = ({ isCreateModal, setIsCreateModal, onClose, setToastDat
         }
     };
 
-
-
     return (
         <>
             <Modal
                 isOpen={isCreateModal}
                 onClose={() => { setIsCreateModal(false); onClose() }}
-                title={IsUpdate ? (headType === "major" ? "Update Major Head data": "Update Sub Head data") : "Create Major & Sub Heads Data "}
+                title={IsUpdate ? (headType === "major" ? "Update Major Head data": "Update Sub Head data") : (headType === "major" ? "Create Major Head": "Create Sub Head")}
                 showHeader
                 size="m"
                 showFooter={false}
@@ -120,22 +198,56 @@ const CreateHeadsData = ({ isCreateModal, setIsCreateModal, onClose, setToastDat
                     onSubmit={handleSubmit(submitFormHandler)}
                 >
                     {!IsUpdate && (
+                    <div className="mb-4">
                     <SearchableSelector
-                        label="Major Head or SubHead"
-                        id="headType"
-                        options={[
-                            { label: "Major Head", value: "major" },
-                            { label: "Sub Head", value: "sub" },
-                        ]}
+                        id="section"
+                        label="Section"
+                        options={sectionOptions}
+                        placeholder="Select Section"
+                        setValue={setValue}
+                        register={register}
+                        validation={{ required: "Section is required" }}
+                        errors={errors}
+                    />
+                    </div>
+                )}
+                    {!IsUpdate && (
+                    <div className="mb-4">
+                    <SearchableSelector
+                        label="Nature of Account"
+                        id="natureaccount"
+                        placeholder="Select Nature of Account"
+                        options={natureOptions}
                         setValue={(id, value) => {
                             setValue(id,value)
                         if (id === "headType") setHeadType(value);
                         }}
                         register={register}
-                        validation={{ required: "Select Major or SubHead" }}
+                        validation={{ required: "Select Nature of Account" }}
                         errors={errors}
-                    />)}
+                    />
+                    </div>
+                )}
+                {!IsUpdate && headType === "sub" && (
+                    <div className="mb-4">
+                    <SearchableSelector
+                        label="Major Head"
+                        id="majorhead"
+                        placeholder="Select Major Head"
+                        options={majorHeadOptions}
+                        setValue={(id, value) => {
+                            setValue(id,value)
+                        if (id === "headType") setHeadType(value);
+                        }}
+                        register={register}
+                        validation={{ required: "Select Major Head" }}
+                        errors={errors}
+                        defaultValue={watch("name")}
+                    />
+                    </div>
+                )}
                     {!IsUpdate ? (
+                    <div className="mb-4">
                     <FormInput
                         label={headType === "major" ? "Major Head Name" : "Sub Head Name"}
                         id="name"
@@ -145,43 +257,25 @@ const CreateHeadsData = ({ isCreateModal, setIsCreateModal, onClose, setToastDat
                         validation={{ required: "Name is required" }}
                         errors={errors}
                     />
+                    </div>
                 ):(
-                    <SearchableSelector
+                    <FormInput
                         label={headType === "major" ? "Major Head Name" : "Sub Head Name"}
                         id="name"
                         type="text"
                         placeholder={`Enter ${headType === "major" ? "Major" : "Sub"} Head Name`}
                         register={register}
-                        defaultValue={headType === "major"? data?.majorHead : data?.subHead}
-                        setValue={setValue}
-                        options={headOptions}
                         validation={{ required: "Name is required" }}
                         errors={errors}
                     />
                     )}
-                    {!IsUpdate && (
-                    <SearchableSelector
-                        id="type"
-                        label="Type"
-                        options={[
-                        { label: "Liability", value: "liability" },
-                        { label: "Assets", value: "Assets" },
-                        { label: "Expenses", value: "Expenses" },
-                        { label: "Income", value: "Income" },
-                        { label: "Others", value: "Others" },
-                        ]}
-                        placeholder="Select Type"
-                        setValue={setValue}
-                        register={register}
-                        validation={{ required: "Type is required" }}
-                        errors={errors}
-                    />)}
+                    
                     <input
                         type="hidden"
                         id="type"
                         value={data?.type}
                     />
-                    <input type="hidden" id="uuid" value={data?.uuid} />
+                    <input type="hidden"{...register("uuid")} />
                     <div className="flex justify-end gap-4 pt-4">
                         <button
                             type="summit"

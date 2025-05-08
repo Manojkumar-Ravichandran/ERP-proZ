@@ -7,6 +7,7 @@ import { getTransactionMatsterCreateEffect, getTransactionMatsterUpdateEffect } 
 import StaticAccountsData from "./StaticAccountsData";
 import SingleCheckbox from "../../../UI/Input/CheckBoxInput/SingleCheckbox";
 import TextArea from "../../../UI/Input/TextArea/TextArea";
+import { createAccountMasterEffect } from "../../../redux/Account/Accounts/AccountsEffects";
 const CreateAccountsMaster = ({ isCreateModal, setIsCreateModal, onClose, setToastData, IsUpdate = false,
     data = null, }) => {
     const {
@@ -81,12 +82,14 @@ const CreateAccountsMaster = ({ isCreateModal, setIsCreateModal, onClose, setToa
                 const createPayload = {
 
                     name: data.name,
-                    type: data.type,
+                    section: data.section,
+                    natureaccount: data.natureaccount,
+                    natureaccount: data.natureaccount,
                     depreciation: data.isDepreciationApplicable ? "Applicable" : "Not Applicable",
                     tds: data.isTDSApplicable ? "Yes" : "No",
                 };
 
-                await getTransactionMatsterCreateEffect(createPayload); // Call the create API
+                await createAccountMasterEffect(createPayload); // Call the create API
                 setToastData({
                     type: "success",
                     message: "Master entry created successfully",

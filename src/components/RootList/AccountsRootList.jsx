@@ -9,6 +9,7 @@ import Expense from "../../pages/Accounts/Transaction/Expense/Expense";
 import TransactionList from "../../pages/Accounts/TransactionMaster/TransactionList";
 import AccountsList from "../../pages/Accounts/AccountsMaster/AccountsList";
 import MajorandSubHead from "../../pages/Accounts/Account/MajorandSubHead";
+import NatureOfAccount from "../../pages/Accounts/Account/NatureOfAccount";
 
 const CreatePurchaseQuotation = lazy(() => import("../../pages/Accounts/Purchase/PurchaseQuotation/CreatePurchaseQuotation"));
 const PurchaseOrder = lazy(() => import("../../pages/Accounts/Purchase/PurchaseOrder/PurchaseOrder"));
@@ -137,19 +138,13 @@ export const AccountsRootList = {
             index: true,
             path: "transactions-master",
             element: <TransactionList />,
+        },               
+        {
+                
+            index: true,
+            path: "natureofaccount",
+            element: <NatureOfAccount />,
         },        
-        // {
-                
-        //     index: true,
-        //     path: "account/subhead",
-        //     element: <SubHead />,
-        // },        
-        // {
-                
-        //     index: true,
-        //     path: "account/majorhead",
-        //     element: <MajorHead />,
-        // },        
         {
                 
             index: true,
@@ -203,8 +198,7 @@ export const AccountsNavList = {
             title: "Accounts", 
             id: "accounts", 
             submenu: [
-                // { title: "Major Head", id: "majorhead", to: "/user/accounts/account/majorhead" },
-                // { title: "Sub Head", id: "subhead", to: "/user/accounts/account/subhead" },
+                { title: "NatureOfAccount", id: "natureofaccount", to: "/user/accounts/natureofaccount" },
                 { title: "Major & SubHead", id: "heads", to: "/user/accounts/account/major&subheads" },
             ]
         },
