@@ -19,35 +19,30 @@ const CreateNatureOfAccount = ({ isCreateModal, setIsCreateModal, onClose, setTo
             setValue("uuid", data.uuid || "");
             setValue("section", data.section || "");
             setValue("name", data.name || "");
-        }
-        // else if (!IsUpdate && data) {
-        //     setValue("uuid", "");
-        //     setValue("section", data.section || "");
-        //     setValue("name", "");
-        // }
-
-        else {
+        }else {
             reset();
         }
     }, [IsUpdate, data, setValue, reset]);
 
-    const [accountOptions, setAccountOptions] = useState([]);
+    const [sectionOptions, setSectionOptions] = useState([]);
     useEffect(() => {
         fetchSection();
     }, []);
 
+
     const fetchSection = async() => {
         try {
             const response = await getNatureOfAccountDropdownEffect();
-            console.log("getNatureOfAccountDropdownEffect",response);
-            
-            const options = response?.data?.data?.map(item => ({
-                label: item.section|| "",
-                value: item.section || "",
-            })) || [];
-            console.log("options", options);
-            
-            setAccountOptions(options);
+
+            const options = [
+                { id: 1, label: "Assets", value: "assets" },
+                { id: 2, label: "Income", value: "income" },
+                { id: 3, label: "Expenses", value: "expenses" },
+                { id: 4, label: "Liability", value: "liability" }
+            ];
+    
+            setSectionOptions(options);
+        
         } catch (error) {
             console.error("Error fetching nature of account options:", error);
         } 
@@ -134,7 +129,7 @@ const CreateNatureOfAccount = ({ isCreateModal, setIsCreateModal, onClose, setTo
                         <SearchableSelector
                             id="section"
                             label="Section"
-                            options={accountOptions}
+                            options={sectionOptions}
                             placeholder="Select section"
                             setValue={setValue}
                             register={register}

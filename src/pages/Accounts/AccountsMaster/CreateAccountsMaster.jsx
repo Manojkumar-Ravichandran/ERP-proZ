@@ -3,11 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "../../../UI/Modal/Modal";
 import FormInput from "../../../UI/Input/FormInput/FormInput";
-import { getTransactionMatsterCreateEffect, getTransactionMatsterUpdateEffect } from "../../../redux/Account/Transactions/Transaction";
-import StaticAccountsData from "./StaticAccountsData";
 import SingleCheckbox from "../../../UI/Input/CheckBoxInput/SingleCheckbox";
 import TextArea from "../../../UI/Input/TextArea/TextArea";
-import { createAccountMasterEffect } from "../../../redux/Account/Accounts/AccountsEffects";
+import { createAccountMasterEffect, getAccountMasterDropdownEffect, updateAccountMasterEffect } from "../../../redux/Account/Accounts/AccountsEffects";
+import SearchableSelector from "../../../UI/Select/selectBox";
 const CreateAccountsMaster = ({ isCreateModal, setIsCreateModal, onClose, setToastData, IsUpdate = false,
     data = null, }) => {
     const {
@@ -15,85 +14,117 @@ const CreateAccountsMaster = ({ isCreateModal, setIsCreateModal, onClose, setToa
         formState: { errors },
         handleSubmit,
         reset,
-        watch,
         setValue,
-        clearErrors,
     } = useForm();
     useEffect(() => {
         if (IsUpdate && data) {
             setValue("uuid", data.uuid || "");
-            setValue("type", data.type || "");
-            setValue("natureofaccount", data.natureofaccount || "");
-            setValue("majorHead", data.majorHead || "");
-            setValue("subHead", data.subHead || "");
             setValue("isDepreciationApplicable", data.depreciation === "Applicable");
             setValue("isTDSApplicable", data.tds === "Yes");
-        }
-        else if (!IsUpdate && data) {
-            setValue("uuid", "");
-            setValue("type", data.type || "");
-            setValue("natureofaccount", "");
-            setValue("majorHead", "");
-            setValue("subHead", "");
-            setValue("isDepreciationApplicable", false);
-            setValue("isTDSApplicable", false);
-        }
-
-        else {
+            setValue("details", data.details || "");
+        }else {
             reset();
         }
     }, [IsUpdate, data, setValue, reset]);
 
-    const [showOtherNature, setShowOtherNature] = useState(false);
-    const [showOtherMajor, setShowOtherMajor] = useState(false);
-    const [showOtherSub, setShowOtherSub] = useState(false);
-    const [previousNatureofaccount, setPreviousNatureofaccount] = useState("");
-    const [previousMajorHead, setPreviousMajorHead] = useState("");
-    const [previousSubHead, setPreviousSubHead] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [sectionOptions, setSectionOptions] = useState([]);
+    const [natureOptions, setNatureOptions] = useState([]);
+    const [majorHeadOptions, setMajorHeadOptions] = useState([]);
+    const [subHeadOptions, setSubHeadOptions] = useState([]);
 
-    const natureOfAccountValue = watch("natureofaccount");
-    const majorHeadValue = watch("majorHead");
-    const subHeadValue = watch("subHead");
+    useEffect(() => {
+            fetchDropdownOptions();
+    }, []);
 
+    const fetchDropdownOptions = async () => {
+            setLoading(true);
+            try {
+                const response = await getAccountMasterDropdownEffect({ section: "", natureaccount: "" });
+                console.log("getAccountMasterDropdownEffect",response);
+                
+                const sectionOptions = response?.data?.data?.map(item => ({
+                    label: item.section,
+                    value: item.section,
+                })) || [];
+                const natureOptions = response?.data?.data?.map(item => ({
+                    label: item.natureaccount,
+                    value: item.natureaccount,
+                })) || [];
+                const majorheadOptions = response?.data?.data?.map(item => ({
+                    label: item.natureaccount,
+                    value: item.natureaccount,
+                })) || [];
+                const subheadOptions = response?.data?.data?.map(item => ({
+                    label: item.natureaccount,
+                    value: item.natureaccount,
+                })) || [];
+                setNatureOptions(natureOptions);
+                setSectionOptions(sectionOptions);
+                setMajorHeadOptions(majorheadOptions);
+                setSubHeadOptions(subheadOptions);
+            } catch (error) {
+                console.error("Error fetching nature of account options:", error);
+            } finally {
+                setLoading(false);
+            }
+            // // for Sub head create dropdown
+            // try {
+            //     const response = await getSubHeadDropdownEffect({ section: "", natureaccount: "", majorhead:""});
+            //     console.log("getSubHeadDropdownEffect",response);
+                
+            //     const majorHeadOptions = response?.data?.data?.map(item => ({
+            //         label: item.majorhead,
+            //         value: item.majorhead,
+            //     })) || [];
+            //     console.log("majorHeadOptions",majorHeadOptions);
+    
+            //     setMajorHeadOptions(majorHeadOptions);
+            // } catch (error) {
+            //     console.error("Error fetching nature of account options:", error);
+            // } finally {
+            //     setLoading(false);
+            // }
+        };
     const submitFormHandler = async (data) => {
         console.log("Account Master data", data);
         
         try {
             if (IsUpdate) {
                 const updatePayload = {
-                    uuid: data.uuid, // Assuming `uuid` is part of the `data` object
-                    type: data.type,
-                    name: data.name,
-                    depreciation: data.isDepreciationApplicable ? "Applicable" : "Not Applicable",
-                    tds: data.isTDSApplicable ? "Yes" : "No",
+                    uuid: data.uuid,
+                    depreciation: data.isDepreciationApplicable ? "applicable" : "notapplicable",
+                    tds: data.isTDSApplicable ? "yes" : "no",
+                    details: data.details || ""
                 };
-                const updateDebitResponse = await getTransactionMatsterUpdateEffect(updatePayload); // Call the update API
-
-                if (updateDebitResponse?.success) {
+                await updateAccountMasterEffect(updatePayload); // Call the update API
                     setToastData({
                         type: "success",
                         message: "Master entry updated successfully",
                     });
-                } else {
-                    throw new Error(updateDebitResponse?.message || "Failed to update master entry");
-                }
+                
             } else {
-                // Create Debit API Call
                 const createPayload = {
 
-                    name: data.name,
                     section: data.section,
                     natureaccount: data.natureaccount,
-                    natureaccount: data.natureaccount,
+                    majorhead: data.majorhead,
+                    subhead: data.subhead,
                     depreciation: data.isDepreciationApplicable ? "Applicable" : "Not Applicable",
                     tds: data.isTDSApplicable ? "Yes" : "No",
+                    details: data.details,
+                    is_edit: 1,
                 };
 
-                await createAccountMasterEffect(createPayload); // Call the create API
+                const response =  await createAccountMasterEffect(createPayload); // Call the create API
+                console.log("createAccountMasterEffect",response);
+                
+                if (response?.success) {
                 setToastData({
                     type: "success",
                     message: "Master entry created successfully",
                 });
+            }
             }
 
             reset();
@@ -115,23 +146,6 @@ const CreateAccountsMaster = ({ isCreateModal, setIsCreateModal, onClose, setToa
         }
     };
 
-    // const natureOfAccountOptions = Array.from(
-    //     new Set(StaticAccountsData.map(item => item.natureofaccount))
-    //   ).map(nature => ({
-    //     label: nature,
-    //     value: nature,
-    // }));
-
-    const getUniqueOptions = (data, key) => {
-        const uniqueValues = [...new Set(data.map(item => item[key]).filter(Boolean))];
-        return uniqueValues.map(val => ({ label: val, value: val }));
-      };
-      
-      const natureOfAccountOptions = getUniqueOptions(StaticAccountsData, "natureofaccount");
-      const majorHeadOptions = getUniqueOptions(StaticAccountsData, "majorHead");
-      const subHeadOptions = getUniqueOptions(StaticAccountsData, "subHead");
-
-
     return (
         <>
             <Modal  
@@ -146,37 +160,62 @@ const CreateAccountsMaster = ({ isCreateModal, setIsCreateModal, onClose, setToa
                 <form
                     onSubmit={handleSubmit(submitFormHandler)}
                 >
-                    <div className="mb-4">
-                    <FormInput
-                        id="natureofaccount"
-                        label="Nature of Account"
-                        placeholder="Select Nature of Account"
-                        errors={errors}
-                        register={register}
-                        validation={{ required: "Please select Nature of Account" }}
-                    />
-                    </div>
-                    
-                    <div className="mb-4">
-                    <FormInput
-                        id="majorHead"
-                        label="Major Head"
-                        placeholder="Select Major Head"
-                        errors={errors}
-                        register={register}
-                        validation={{ required: "Please select Major Head" }}
-                    />
-                    </div>
-                    <div className="mb-4">
-                    <FormInput
-                        id="subHead"
-                        label="Sub Head"
-                        placeholder="Select Sub Head"
-                        errors={errors}
-                        register={register}
-                        validation={{ required: "Please select Sub Head" }}
-                    />
-                    </div>
+                    {!IsUpdate && (
+                        <div className="mb-4">
+                        <SearchableSelector
+                            id="section"
+                            label="Section"
+                            options={sectionOptions}
+                            placeholder="Select Section"
+                            setValue={setValue}
+                            register={register}
+                            validation={{ required: "Section is required" }}
+                            errors={errors}
+                        />
+                        </div>
+                    )}
+                    {!IsUpdate && (
+                        <div className="mb-4">
+                            <SearchableSelector
+                                label="Nature of Account"
+                                id="natureaccount"
+                                placeholder="Select Nature of Account"
+                                options={natureOptions}
+                                setValue={setValue}
+                                register={register}
+                                validation={{ required: "Select Nature of Account" }}
+                                errors={errors}
+                            />
+                        </div>
+                    )}
+                    {!IsUpdate && (
+                        <div className="mb-4">
+                            <SearchableSelector
+                                label="Major Head"
+                                id="majorhead"
+                                placeholder="Select Major Head"
+                                options={majorHeadOptions}
+                                setValue={setValue}
+                                register={register}
+                                validation={{ required: "Select Major Head" }}
+                                errors={errors}
+                            />
+                        </div>
+                    )}
+                    {!IsUpdate && (
+                        <div className="mb-4">
+                            <SearchableSelector
+                                label="SubHead"
+                                id="subhead"
+                                placeholder="Select SubHead"
+                                options={subHeadOptions}
+                                setValue={setValue}
+                                register={register}
+                                validation={{ required: "Select Major Head" }}
+                                errors={errors}
+                            />
+                        </div>
+                    )}
                     <div className="mb-4">
                     <SingleCheckbox
                         id="isDepreciationApplicable"
@@ -195,9 +234,9 @@ const CreateAccountsMaster = ({ isCreateModal, setIsCreateModal, onClose, setToa
                     /></div>
                     <div className="mb-4">
                     <TextArea
-                        id="notes"
-                        label="Notes"
-                        placeholder="Enter notes"
+                        id="details"
+                        label="Details"
+                        placeholder="Enter Details"
                         register={register}
                         validation={{
                             maxLength: {
@@ -207,14 +246,12 @@ const CreateAccountsMaster = ({ isCreateModal, setIsCreateModal, onClose, setToa
                         }}
                         errors={errors}
                     /></div>
-                    {/* <input
+                    <input
                         type="hidden"
                         id="type"
                         value={data?.type}
                     />
-                    <input type="hidden" id="uuid" value={data?.uuid} /> */}
-                    <input type="hidden" {...register("type")} />
-                    <input type="hidden" {...register("uuid")} />
+                    <input type="hidden" id="uuid" value={data?.uuid} />
                     <div className="flex justify-end gap-4 pt-4">
                         <button
                             type="summit"

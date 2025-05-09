@@ -7,9 +7,10 @@ import Credit from "../../pages/Accounts/Transaction/Credit/Credit";
 import Debit from "../../pages/Accounts/Transaction/Debit/Debit";
 import Expense from "../../pages/Accounts/Transaction/Expense/Expense";
 import TransactionList from "../../pages/Accounts/TransactionMaster/TransactionList";
-import AccountsList from "../../pages/Accounts/AccountsMaster/AccountsList";
-import MajorandSubHead from "../../pages/Accounts/Account/MajorandSubHead";
+// import AccountsList from "../../pages/Accounts/AccountsMaster/AccountsList";
+// import MajorandSubHead from "../../pages/Accounts/Account/MajorandSubHead";
 import NatureOfAccount from "../../pages/Accounts/Account/NatureOfAccount";
+import AccountMaster from "../../pages/Accounts/AccountsMaster/AccountMaster";
 
 const CreatePurchaseQuotation = lazy(() => import("../../pages/Accounts/Purchase/PurchaseQuotation/CreatePurchaseQuotation"));
 const PurchaseOrder = lazy(() => import("../../pages/Accounts/Purchase/PurchaseOrder/PurchaseOrder"));
@@ -145,17 +146,29 @@ export const AccountsRootList = {
             path: "natureofaccount",
             element: <NatureOfAccount />,
         },        
-        {
+        // {
                 
-            index: true,
-            path: "account/major&subheads",
-            element: <MajorandSubHead />,
-        },        
+        //     index: true,
+        //     path: "account/major&subheads",
+        //     element: <MajorandSubHead />,
+        // },        
+        // {
+                
+        //     index: true,
+        //     path: "accounts-masterold",
+        //     element: <AccountsList />,
+        // },        
+        // {
+                
+        //     index: true,
+        //     path: "accounts-master-old",
+        //     element: <AccountMaster_old />,
+        // },        
         {
                 
             index: true,
             path: "accounts-master",
-            element: <AccountsList />,
+            element: <AccountMaster />,
         },        
     ],
 };
@@ -199,7 +212,7 @@ export const AccountsNavList = {
             id: "accounts", 
             submenu: [
                 { title: "NatureOfAccount", id: "natureofaccount", to: "/user/accounts/natureofaccount" },
-                { title: "Major & SubHead", id: "heads", to: "/user/accounts/account/major&subheads" },
+                // { title: "Major & SubHead", id: "heads", to: "/user/accounts/account/major&subheads" },
             ]
         },
         { title: "Accounts Master", id: "accounts-master", to: "/user/accounts/accounts-master" },

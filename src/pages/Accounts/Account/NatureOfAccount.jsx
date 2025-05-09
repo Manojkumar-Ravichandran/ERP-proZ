@@ -26,6 +26,7 @@ const NatureOfAccount = () => {
     const [isApproveModal, setIsApproveModal] = useState(false);
     const [toastData, setToastData] = useState({ show: false });
     const [loading, setLoading] = useState(false);
+    const [activeTab, setActiveTab] = useState("assets");
     const [accountList, setAccountList] = useState({ data: [] });
     const [sectionDatas, setSectionDatas] = useState();
     const [leadList, setSectionList] = useState([]);
@@ -34,7 +35,6 @@ const NatureOfAccount = () => {
         startDate: null,
         endDate: null,
       });
-    console.log("accountList",accountList);
     
     const [isUpdate, setIsUpdate] = useState(false);
     const [selectedData, setSelectedData] = useState(null);
@@ -56,6 +56,12 @@ const NatureOfAccount = () => {
         setIsApproveModal(true);
     };
 
+    const tabs = [
+        { id: "assets", label: "Assets" },
+        { id: "liability", label: " Liability" },
+        { id: "expenses", label: "Expenses" },
+        { id: "income", label: "Income" },
+    ];
     const columnDefs = [
         { headerName: "Section", field: "section", unSortIcon: true },
         { headerName: "Nature Of Account", field: "name", unSortIcon: true },
@@ -80,51 +86,64 @@ const NatureOfAccount = () => {
         },
     ];
     useEffect(() => {
-        fetchAccountList ();
-        getSectionList();
-    }, [searchText,paginationPageSize, paginationCurrentPage,selectedSection]);
+        fetchAccountList (activeTab);
+        // getSectionList();
+    }, [searchText,activeTab,paginationPageSize, paginationCurrentPage,selectedSection]);
 
-    const getSectionList = async () => {
-        let { data } = await getNatureOfAccountListEffect();
+    // const getSectionList = async () => {
+    //     let { data } = await getNatureOfAccountListEffect();
         
-        const formattedData = data.data.data.map((list) => ({
-          label: list.section,
-          value: list.section,
-        }));
+    //     const formattedData = data.data.data.map((list) => ({
+    //       label: list.section,
+    //       value: list.section,
+    //     }));
 
-        setStageList(formattedData);
-      };
+    //     setStageList(formattedData);
+    //   };
 
-    const fetchAccountList  = async() => {
+    // const fetchAccountList  = async() => {
+    //     setLoading(true);
+    //     try {
+    //         const payload = {
+    //             section: selectedSection || "",
+    //             search: searchText.trim(),
+    //         };
+    //         const response = await getNatureOfAccountListEffect(payload);
+    //         setAccountList({ data: response?.data?.data?.data || [] });
+    //     } catch (error) {
+    //         console.error("Failed to fetch data:", error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    const fetchAccountList  = async(section) => {
         setLoading(true);
         try {
-            const payload = {
-                section: selectedSection || "",
-                search: searchText.trim(),
-            };
-            const response = await getNatureOfAccountListEffect(payload);
-            setAccountList({ data: response?.data?.data?.data || [] });
+            // const payload = {
+            //     section: selectedSection || "",
+            //     search: searchText.trim(),
+            // };
+            const response = await getNatureOfAccountListEffect();
+            console.log("getNatureOfAccountListEffect",response);
+
+            const data = response?.data?.data?.data || [];
+            console.log("datya",data);
+
+            const filteredData = data.filter(item => item.section === section);
+            console.log("datya",filteredData);
+
+            const formattedData = filteredData.map(item => ({
+                id: item.id,
+                name: item.name,
+                section: item.section,
+            }));
+            setAccountList({ data: formattedData });
         } catch (error) {
             console.error("Failed to fetch data:", error);
         } finally {
             setLoading(false);
         }
     };
-    // const handleChipClick = (filter) => {
-    //     // setActiveFilter(filter.label);
-    //     setPaginationCurrentPage(1);
-    //     let newClosedType = "";
-    //     if (filter.label === "Won" || filter.label === "Lost") {
-    //       newClosedType = filter.label.toLowerCase();
-    //     }
-    //     setClosedType(newClosedType);
-    //     getSecList(filter.label, section, newClosedType);
-    //     setActiveFilter((prevFilter) => (prevFilter === filter.label ? null : filter.label));
-    // };
-    //   const handleStageChange = (selectedOption) => {
-    //     setSelectedSection(selectedOption?.target?.value);
-    //     getSecList("", selectedOption?.target?.value);
-    // };
     const handleStageChange = (e) => {
         const selectedValue = e.target.value;
         setSelectedSection(selectedValue);
@@ -132,57 +151,9 @@ const NatureOfAccount = () => {
     }
     const handleClearFilters = () => {
         setSearchText('')
-        // setActiveFilter("Open");
         setSelectedSection(null);
-        // setIsOpen(true);
-        // getLeadList("Open");
+        // setActiveTab("asstes");
     };
-    // const handleLeadList = (data) => {
-    //     setSectionDatas(data);
-    //     setSectionList(data.data.data);
-    //   };
-    // const filterMap = {
-    //     // Open: "open",
-    //     // Overdue: "overdue",
-    //     // Closed: "closed",
-    //     // All: "",
-    //     Section:"section"
-    //   };
-    // const getSecList = async (filter, section, clickedClosedType) => {
-    //     setLoading(true); // Start loading before fetching
-    //     const filterValue = filterMap[filter] || "";
-    
-    //     const data = {
-    //       page: paginationCurrentPage,
-    //       page_size: paginationPageSize,
-    //       search: searchText,
-    //       status: filterValue,
-    //       sections: section,
-    //       closed_type: clickedClosedType || "",
-    //     };
-    
-    //     try {
-    //         const response = await getNatureOfAccountListEffect(data);
-    //         handleLeadList(response);
-    //     } catch (error) {
-    //         console.error("Error in fetching section data:", error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    //     // dispatch(
-    //     //     getNatureOfAccountListEffect({
-    //     //     ...data,
-    //     //     callback: (response) => {
-    //     //       handleLeadList(response);
-    //     //       setLoading(false); // Stop loading when data is received
-    //     //     }
-    //     //   })
-    //     // );
-    //   };
-
-    // const handleSearchChange = (e) => {
-    //     setSearchText(e.target.value);
-    // };
     const handleSearchChange = (e) => {
         setSearchText(e.target.value);
         setPaginationCurrentPage(1); // Reset to first page on search
@@ -197,14 +168,14 @@ const NatureOfAccount = () => {
     };
     return (
         <div >
-                    {toastData?.show && (
-                                    <AlertNotification
-                                    show={toastData.show}
-                                    message={toastData.message}
-                                    type={toastData.type}
-                                    onClose={toastOnclose}
-                                />
-                    )}
+            {toastData?.show && (
+                <AlertNotification
+                    show={toastData.show}
+                    message={toastData.message}
+                    type={toastData.type}
+                    onClose={toastOnclose}
+                />
+            )}
                     
                     <div className="rounded-lg p-2 my-2 bg-white darkCardBg">
                         <Breadcrumps items={breadcrumbItems} />
@@ -226,7 +197,7 @@ const NatureOfAccount = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="">
+                                {/* <div className="">
                                     <select className="chips" onChange={handleStageChange}>
                                     {stageList.map((list) => (
                                         <option
@@ -238,13 +209,24 @@ const NatureOfAccount = () => {
                                         </option>
                                     ))}
                                     </select>
+                                </div> */}
+                                <div className="flex">
+                                    {tabs.map((tab) => (
+                                        <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`px-6 py-2 -mb-px ${activeTab === tab.id ? "tab-active" : ""}`}
+                                        >
+                                        {tab.label}
+                                        </button>
+                                    ))}
                                 </div>
-                                <button
+                                {/* <button
                                     className="chips text-white px-1 py-1 rounded transition float-end gap-2"
                                     onClick={handleClearFilters}
                                 >
                                     <span>{icons.clear}</span> Clear Filters
-                                </button>
+                                </button> */}
                                 <div className="me-3">
                                     <IconButton
                                         label="Add"
