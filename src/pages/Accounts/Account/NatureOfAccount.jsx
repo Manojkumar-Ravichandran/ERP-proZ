@@ -8,19 +8,22 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import icons from "../../../contents/Icons";
 import CreateNatureOfAccount from "./CreateNatureOfAccount";
-import { getNatureOfAccountListEffect } from "../../../redux/Account/Accounts/AccountsEffects";
+import { getAccountMasterListEffect, getNatureOfAccountListEffect } from "../../../redux/Account/Accounts/AccountsEffects";
 import { formatDateToYYYYMMDD } from "../../../utils/Date";
 import { useDispatch } from "react-redux";
+import DropdownButton from "../../../UI/Buttons/DropdownBtn/DropdownBtn";
+import FilterDropdown from "../../../components/DropdownFilter/FilterDropdown";
 const NatureOfAccount = () => {
     const {
         reset,
     } = useForm();
 
-    const [activeFilter, setActiveFilter] = useState("Section");
+    const [activeFilter, setActiveFilter] = useState("");
     const [paginationPageSize, setPaginationPageSize] = useState(10);
     const [paginationCurrentPage, setPaginationCurrentPage] = useState(1);
-    const [stageList, setStageList] = useState([]);
     const [selectedSection, setSelectedSection] = useState();
+    const [isDepOpen, setIsDepOpen] = useState(true);
+    const [isTDSOpen, setIsTDSOpen] = useState(true);
     const [closedType, setClosedType] = useState("");
     const [searchText, setSearchText] = useState("");
     const [isApproveModal, setIsApproveModal] = useState(false);
@@ -28,14 +31,8 @@ const NatureOfAccount = () => {
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState("assets");
     const [accountList, setAccountList] = useState({ data: [] });
-    const [sectionDatas, setSectionDatas] = useState();
-    const [leadList, setSectionList] = useState([]);
     const [section, setSection] = useState("");
-    const [dates, setDates] = useState({
-        startDate: null,
-        endDate: null,
-      });
-    
+    const [filters, setFilters] = useState({status: ""});
     const [isUpdate, setIsUpdate] = useState(false);
     const [selectedData, setSelectedData] = useState(null);
 
@@ -44,6 +41,9 @@ const NatureOfAccount = () => {
 
     const toastOnclose = () => {
         setToastData(() => ({ ...toastData, show: false }));
+    };
+    const handleSectionChange = (selectedOption) => {
+        setFilters((prev) => ({ ...prev, status: selectedOption || "" }));
     };
     const breadcrumbItems = [
         { id: 1, label: "Home", link: "/user" },
@@ -56,15 +56,85 @@ const NatureOfAccount = () => {
         setIsApproveModal(true);
     };
 
-    const tabs = [
-        { id: "assets", label: "Assets" },
-        { id: "liability", label: " Liability" },
-        { id: "expenses", label: "Expenses" },
-        { id: "income", label: "Income" },
+    const sectionFilter = [
+        { value: "assets", label: "Assets" },
+        { value: "liability", label: " Liability" },
+        { value: "expenses", label: "Expenses" },
+        { value: "income", label: "Income" },
     ];
+    
+    // useEffect(() => {
+    //     fetchAccountList (searchText);
+    // }, [searchText,activeTab,paginationPageSize, paginationCurrentPage,selectedSection]);
+    
+    const fetchAccountList  = async() => {
+        setLoading(true);
+        try {
+            const payload = {
+                section: selectedSection  || "",
+                majorhead: "",
+                subhead: "",
+                depreciation:"",
+                tds:"",
+                search: searchText.trim(),
+            };
+            const response = await getAccountMasterListEffect(payload);
+            console.log("getAccountMasterListEffect",response);
+
+            const data = response?.data?.data?.data || [];
+            console.log("datya",data);
+
+            // const filteredData = data.filter(item => item.section === section);
+            // console.log("datya",filteredData);
+            // const filteredData = data.filter(item => {
+            // const matchesSection = section ? item.section === section : true;
+            // const matchesSearch = search
+            //     ? item.name.toLowerCase().includes(search.toLowerCase())
+            //     : true;
+            // return matchesSection && matchesSearch;
+            // });
+
+            const formattedData = data.map(item => ({
+                uuid: item.uuid,
+                name: item.name,
+                section: item.section,
+            }));
+            console.log("formattedData",formattedData);
+            
+            setAccountList({ data: formattedData });
+        } catch (error) {
+            console.error("Failed to fetch data:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
+        fetchAccountList();
+    }, [selectedSection, searchText, paginationPageSize, paginationCurrentPage]);
+
+    // const handleClearFilters = () => {
+    //     setActiveFilter("Open");
+    //     setSearchText('')
+    //     setSelectedSection(null);
+    //     setActiveTab("asstes");
+    //     fetchAccountList();
+    // };
+    const handleSearchChange = (e) => {
+        setSearchText(e.target.value);
+        setPaginationCurrentPage(1); 
+    };
+    const handleClearFilters = () => {
+        setSearchText('');
+        setSelectedSection('');
+        fetchAccountList(); 
+    };
     const columnDefs = [
+        { headerName: "Nature Of The Account", field: "name", unSortIcon: true },
         { headerName: "Section", field: "section", unSortIcon: true },
-        { headerName: "Nature Of Account", field: "name", unSortIcon: true },
+        { headerName: "Major Head", field: "majorhead_name", unSortIcon: true },
+        { headerName: "Sub Head", field: "subhead_name", unSortIcon: true },
+        { headerName: "Depreciation", field: "depreciation", unSortIcon: true },
+        { headerName: "TDS", field: "tds", unSortIcon: true },
         {
             headerName: "Action",
             field: "action",
@@ -81,90 +151,38 @@ const NatureOfAccount = () => {
                     >
                         {React.cloneElement(icons.editIcon, { size: 18 })}
                     </span>
+                    <span
+                        className="top-clr rounded-full border p-2 cursor-pointer"
+                        data-tooltip-id="edit-notes"
+                        // onClick={() => handleSubEdit(params?.data)}
+                    >
+                        {React.cloneElement(icons.deleteIcon, { size: 18,color: "#eb8934" })}
+                    </span>
                 </div>
             ),
         },
     ];
-    useEffect(() => {
-        fetchAccountList (activeTab);
-        // getSectionList();
-    }, [searchText,activeTab,paginationPageSize, paginationCurrentPage,selectedSection]);
-
-    // const getSectionList = async () => {
-    //     let { data } = await getNatureOfAccountListEffect();
-        
-    //     const formattedData = data.data.data.map((list) => ({
-    //       label: list.section,
-    //       value: list.section,
-    //     }));
-
-    //     setStageList(formattedData);
-    //   };
-
-    // const fetchAccountList  = async() => {
-    //     setLoading(true);
-    //     try {
-    //         const payload = {
-    //             section: selectedSection || "",
-    //             search: searchText.trim(),
-    //         };
-    //         const response = await getNatureOfAccountListEffect(payload);
-    //         setAccountList({ data: response?.data?.data?.data || [] });
-    //     } catch (error) {
-    //         console.error("Failed to fetch data:", error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-    const fetchAccountList  = async(section) => {
-        setLoading(true);
-        try {
-            // const payload = {
-            //     section: selectedSection || "",
-            //     search: searchText.trim(),
-            // };
-            const response = await getNatureOfAccountListEffect();
-            console.log("getNatureOfAccountListEffect",response);
-
-            const data = response?.data?.data?.data || [];
-            console.log("datya",data);
-
-            const filteredData = data.filter(item => item.section === section);
-            console.log("datya",filteredData);
-
-            const formattedData = filteredData.map(item => ({
-                id: item.id,
-                name: item.name,
-                section: item.section,
-            }));
-            setAccountList({ data: formattedData });
-        } catch (error) {
-            console.error("Failed to fetch data:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-    const handleStageChange = (e) => {
-        const selectedValue = e.target.value;
-        setSelectedSection(selectedValue);
-        setPaginationCurrentPage(1); // Reset to first page on section change
-    }
-    const handleClearFilters = () => {
-        setSearchText('')
-        setSelectedSection(null);
-        // setActiveTab("asstes");
-    };
-    const handleSearchChange = (e) => {
-        setSearchText(e.target.value);
-        setPaginationCurrentPage(1); // Reset to first page on search
-    };
+    const handleDepreciationToggle = () => {
+    const tds = !isDepOpen;
+    setIsDepOpen(tds);
+    const newFilter = tds ? "Open" : "Closed";
+    setActiveFilter(newFilter);
+    // getLeadList(newFilter, stage, clickedClosedType);
+  };
+    const handleTDSToggle = () => {
+    const tds = !isTDSOpen;
+    setIsTDSOpen(tds);
+    const newFilter = tds ? "Open" : "Closed";
+    setActiveFilter(newFilter);
+    // getLeadList(newFilter, stage, clickedClosedType);
+  };
 
     const handleModalClose = () => {
         setIsApproveModal(false);
         reset();
         setIsUpdate(false);
         setSelectedData(null);
-        fetchAccountList ();
+        fetchAccountList ( searchText);
     };
     return (
         <div >
@@ -181,7 +199,21 @@ const NatureOfAccount = () => {
                         <Breadcrumps items={breadcrumbItems} />
                     </div>
                     <div className="w-full flex flex-col h-full min-h-0">
-                        <div className="bg-white pr-2 rounded-lg darkCardBg">
+                        <div className="flex items-center justify-end p2 mb-2 gap-2">
+                            <FilterDropdown
+                                options={sectionFilter}
+                                placeholder="Section"
+                                showClearButton={true}
+                                onFilter={handleSectionChange}
+
+                            />
+                            <button
+                                className="chips text-white px-1 py-1 rounded transition float-end gap-2"
+                                onClick={handleClearFilters}>
+                                <span>{icons.clear}</span> Clear Filters
+                            </button>
+                        </div>
+                        <div className="bg-white pr-2 rounded-lg darkCardBg ">
                             <div className="bg-white rounded-lg flex items-center justify-between">
                                 <div className="flex items-center p-3">
                                     <div className="relative w-full max-w-md">
@@ -197,46 +229,67 @@ const NatureOfAccount = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {/* <div className="">
-                                    <select className="chips" onChange={handleStageChange}>
-                                    {stageList.map((list) => (
-                                        <option
-                                        className="darkCardBg"
-                                        key={list.value}
-                                        value={list.value}
+                                <div className="flex items-center  justify-between gap-2">
+                                    <div className="toggle-container">
+                                        <div
+                                            onClick={handleDepreciationToggle}
+                                            className={`toggle-switch ${isDepOpen ? "bg-blue-500" : "bg-gray-0"
+                                            }`}
                                         >
-                                        {list.label}
-                                        </option>
-                                    ))}
-                                    </select>
-                                </div> */}
-                                <div className="flex">
-                                    {tabs.map((tab) => (
-                                        <button
-                                        key={tab.id}
-                                        onClick={() => setActiveTab(tab.id)}
-                                        className={`px-6 py-2 -mb-px ${activeTab === tab.id ? "tab-active" : ""}`}
+                                            <span
+                                            className={`toggle-label ${isDepOpen ? "opacity-100" : "opacity-0"}`}
+                                            >
+                                            Depreciation
+                                            </span>
+                                            <span
+                                            className={`toggle-label ${isDepOpen ? "opacity-0" : "opacity-100"}`}
+                                            >
+                                            Depreciation
+                                            </span>
+                                            <div
+                                            className={`toggle-button ${isDepOpen ? "translate-x-8" : "translate-x-0"
+                                                }`}
+                                            ></div>
+                                        </div>
+                                        </div>
+                                    <div className="toggle-container">
+                                        <div
+                                            onClick={handleTDSToggle}
+                                            className={`toggle-switch ${isTDSOpen ? "bg-blue-500" : "bg-gray-0"
+                                            }`}
                                         >
-                                        {tab.label}
-                                        </button>
-                                    ))}
-                                </div>
-                                {/* <button
-                                    className="chips text-white px-1 py-1 rounded transition float-end gap-2"
-                                    onClick={handleClearFilters}
-                                >
-                                    <span>{icons.clear}</span> Clear Filters
-                                </button> */}
-                                <div className="me-3">
-                                    <IconButton
-                                        label="Add"
-                                        icon={icons.plusIcon}
-                                        onClick={() => {
-                                            setIsApproveModal(true);
-                                            setIsUpdate(false);
-                                            setSelectedData(null);
-                                        }}
-                                    />
+                                            <span
+                                            className={`toggle-label ${isTDSOpen ? "opacity-100" : "opacity-0"}`}
+                                            >
+                                            TDS
+                                            </span>
+                                            <span
+                                            className={`toggle-label ${isTDSOpen ? "opacity-0" : "opacity-100"}`}
+                                            >
+                                            TDS
+                                            </span>
+                                            <div
+                                            className={`toggle-button ${isTDSOpen ? "translate-x-8" : "translate-x-0"
+                                                }`}
+                                            ></div>
+                                        </div>
+                                        </div>
+                                    <div className="me-3">
+                                        <IconButton
+                                            label="Add"
+                                            icon={icons.plusIcon}
+                                            onClick={() => {
+                                                setIsApproveModal(true);
+                                                setIsUpdate(false);
+                                                setSelectedData({
+                                                    section:section,
+                                                });
+                                            }}
+                                        />
+                                    </div>
+                                    {/* <div>
+                                        <ExportButton label="Export" data={leadList} filename="Nature Account List" />
+                                    </div> */}
                                 </div>
                             </div>
                         </div>

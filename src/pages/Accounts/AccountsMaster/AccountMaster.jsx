@@ -4,7 +4,7 @@ import ReusableAgGrid from "../../../UI/AgGridTable/AgGridTable";
 import IconButton from "../../../UI/Buttons/IconButton/IconButton";
 import icons from "../../../contents/Icons";
 import { useForm } from "react-hook-form";
-import { getAccountMasterListEffect, getMajorHeadListEffect, getSubHeadListEffect } from "../../../redux/Account/Accounts/AccountsEffects";
+import { getAccountMasterListEffect, getMajorHeadListEffect, getSubHeadListEffect, majorHeadDeleteEffect, subHeadDeleteEffect } from "../../../redux/Account/Accounts/AccountsEffects";
 import React, { useEffect, useState } from "react";
 import Breadcrumps from "../../../UI/Breadcrumps/Breadcrumps";
 import AlertNotification from "../../../UI/AlertNotification/AlertNotification";
@@ -14,18 +14,20 @@ import CreateMajorandSubHead from "./CreateMajorandSubHead";
 const AccountMaster = () => {
     const {reset} = useForm();
     const [masterList, setMasterList] = useState({ data: [] });
+    const [currentMajorHead, setCurrentMajorHead] = useState(null);
     const [searchText, setSearchText] = useState("");
     const [isApproveModal, setIsApproveModal] = useState(false);
     const [isUpdate, setIsUpdate] = useState(false);
     const [selectedData, setSelectedData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [toastData, setToastData] = useState({ show: false });
-    const [activeTab, setActiveTab] = useState("liability");
+    const [activeTab, setActiveTab] = useState("assets");
     const [activeCard, setActiveCard] = useState(null);
     const [activeType, setActiveType] = useState(null);
     const [selectedSection, setSelectedSection] = useState();
     const [majorHeadList, setMajorHeadList] = useState([]);
     const [subHeadList, setSubHeadList] = useState([]);
+    
 
     const toastOnclose = () => {
         setToastData(() => ({ ...toastData, show: false }));
@@ -34,9 +36,17 @@ const AccountMaster = () => {
         { id: 1, label: "Home", link: "/user" },
         { id: 2, label: "Account Master" },
     ];
-    const handleEdit = (data) => {
+    const handleMajorEdit = (data) => {
+        console.log("handleMajorEdit",data);
+        
         setIsUpdate(true);
         setSelectedData(data);
+        setIsApproveModal(true);
+    };
+    const handleSubEdit = (data) => {
+        
+        setIsUpdate(true);
+        setSelectedData({ ...data, headType: "sub" });
         setIsApproveModal(true);
     };
     const tabs = [
@@ -46,12 +56,7 @@ const AccountMaster = () => {
         { id: "income", label: "Income" },
     ];
     const columnDefs = [
-            // { headerName: "Nature Of Account", field: "natureaccount_name", unSortIcon: true },
-            // { headerName: "Major Head", field: "majorhead_name", unSortIcon: true },
-            { headerName: "Sub Head", field: "subhead_name", unSortIcon: true },
-            { headerName: "Depreciation", field: "depreciation", unSortIcon: true },
-            { headerName: "TDS", field: "tds", unSortIcon: true, },
-            { headerName: "Details", field: "details", unSortIcon: true },
+            { headerName: "Sub Head", field: "name", unSortIcon: true },
             {
                 headerName: "Action",
                 field: "action",
@@ -64,92 +69,142 @@ const AccountMaster = () => {
                         <span
                             className="top-clr rounded-full border p-2 cursor-pointer"
                             data-tooltip-id="edit-notes"
-                            onClick={() => handleEdit(params?.data)}
+                            onClick={() => handleSubEdit(params?.data)}
                         >
                             {React.cloneElement(icons.editIcon, { size: 18 })}
+                        </span>
+                        <span
+                            className="top-clr rounded-full border p-2 cursor-pointer"
+                            data-tooltip-id="delete"
+                            onClick={() => handleDelete(params?.data)}
+                        >
+                            {React.cloneElement(icons.deleteIcon, { size: 18,color: "#eb8934" })}
                         </span>
                     </div>
                 ),
             },
         ];
     useEffect(() => {
-        // fetchMasterList();
         fetchMajorHeadList(activeTab);
-        fetchSubHeadList();
-        }, [searchText,activeTab,selectedSection]);
-    // const fetchMasterList  = async(searchText, section) => {
-    //     setLoading(true);
-    //     try {
-    //         const searchQuery = searchText.trim();
-    //         const payload = {
-    //         section: section,
-    //         natureaccount_name: searchQuery,
-    //         majorhead_name: searchQuery,
-    //         subhead_name: searchQuery,
-    //     };
-    //         const response = await getAccountMasterListEffect(payload);
-            
-    //         setMasterList({ data: response?.data?.data?.data || [] });
-    //     } catch (error) {
-    //         console.error("Failed to fetch data:", error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-    const fetchSubHeadList = async (majorhead) => {
-            setLoading(true);
-            try {
-                const response = await getSubHeadListEffect();
-                console.log("getSubHeadListEffect",response);
+        fetchSubHeadList(activeTab, activeCard,searchText);
+        }, [searchText,activeTab,selectedSection,activeCard]);
 
-                const data = response?.data?.data?.data || [];
-
-                const filteredData = data.filter(item => item.majorhead === majorhead);
-
-                const formattedData = filteredData.map(item => ({
-                    id: item.id,
-                    name: item.name,
-                    majorhead: item.majorhead,
-                }));
-                setSubHeadList(formattedData);
-            } catch (error) {
-                console.error("Failed to fetch data:", error);
-            } finally {
-                setLoading(false);
-            }
+    const fetchSubHeadList = async (section = "", majorhead = "", search = "") => {
+    setLoading(true);
+    try {
+        const payload = {
+            section,
+            majorhead,
         };
-    const fetchMajorHeadList = async (section) => {
+
+        const response = await getSubHeadListEffect(payload);
+
+        const data = response?.data?.data?.data || [];
+
+        const searchText = search.toLowerCase();
+        const filteredData = data.filter(item => 
+            item.name?.toLowerCase().includes(searchText)
+        );
+
+        const formattedData = filteredData.map(item => ({
+            uuid: item.uuid,
+            name: item.name,
+            section: item.section,
+            majorhead: item.majorhead_name || majorhead,
+        }));
+
+        console.log("formattedData", formattedData);
+        setSubHeadList({ data: formattedData });
+
+    } catch (error) {
+        console.error("Failed to fetch data:", error);
+    } finally {
+        setLoading(false);
+    }
+};
+
+    const fetchMajorHeadList = async (section = "") => {
+    setLoading(true);
+    try {
+        const payload = {
+            section: section
+        };
+        const response = await getMajorHeadListEffect(payload);
+        
+        const data = response?.data?.data?.data || [];
+
+        const formattedData = data.map(item => ({
+            id: item.id,
+            uuid:item.uuid,
+            name: item.name,
+            section: item.section,
+        }));
+
+        setMajorHeadList({ data: formattedData });
+        if (formattedData.length > 0 && !activeCard) {
+            const firstCard = formattedData[0];
+            setActiveCard(firstCard.id);
+            setCurrentMajorHead(firstCard);
+        }
+    } catch (error) {
+        console.error("Failed to fetch data:", error);
+    } finally {
+        setLoading(false);
+    }
+};
+
+const handleDelete = async (data) => {
+    const confirmDelete = window.confirm(`Are you sure you want to delete "${data.name}"?`);
+
+    if (confirmDelete) {
         setLoading(true);
         try {
-            const response = await getMajorHeadListEffect();
-            console.log("getMajorHeadListEffect",response);
-            
-            const data = response?.data?.data?.data || [];
+            const payload = {
+                uuid:data.uuid
+            }
+            let response;
+            if (data.headType === "major") {
+                response = await majorHeadDeleteEffect(payload);
+            } else {
+                response = await subHeadDeleteEffect(payload);
+            }
 
-            const filteredData = data.filter(item => item.section === section);
-
-            const formattedData = filteredData.map(item => ({
-                id: item.id,
-                name: item.name,
-                section: item.section,
-            }));
-
-            setMajorHeadList({ data: formattedData });
+            if (response?.status === 200) {
+                setToastData({
+                    type: "success",
+                    message: `${data.headType === "major" ? "Major Head" : "Sub Head"} Deleted successfully`,
+                })
+            }
+             if (data.headType === "major") {
+                    fetchMajorHeadList(activeTab); 
+                } else {
+                    fetchSubHeadList(currentMajorHead.section, currentMajorHead.name, searchText); 
+                }
         } catch (error) {
-            console.error("Failed to fetch data:", error);
+            console.error("Failed to delete:", error);
+            setToastData({
+                type: "error",
+                message: error?.response?.data?.message || error.message || "An error occurred",
+            });
         } finally {
             setLoading(false);
+            reset();
         }
-    };
+    }
+}
     const handleClearFilters = () => {
         setSearchText('')
         setSelectedSection(null);
         setActiveTab("liability");
     };
     const handleCardClick = (card) => {
+        console.log("handleCardClick",card);
+        
         setActiveCard(card.id);
-        setActiveType(card.type);
-
+        setCurrentMajorHead(card);
+        setSelectedData({ headType: "major", majorhead: card.name, section: card.section, id:card.id });
+        
+        fetchSubHeadList(card.section, card.name);
     };
     const handleSearchChange = (e) => {
         setSearchText(e.target.value);
@@ -159,7 +214,10 @@ const AccountMaster = () => {
         reset();
         setIsUpdate(false);
         setSelectedData(null);
-        // fetchMasterList();
+        fetchMajorHeadList(activeTab);
+        if (currentMajorHead) {
+        fetchSubHeadList(currentMajorHead.section, currentMajorHead.name, searchText);
+        }
     };
     return(
         <>
@@ -175,7 +233,7 @@ const AccountMaster = () => {
             <div className="rounded-lg p-2 my-2 bg-white darkCardBg">
                 <Breadcrumps items={breadcrumbItems} />
             </div>
-            <div className="p-2 bg-white darkCardBg mb-2">
+            <div className="p-1 bg-white border-b mb-2">
                 <div className="flex">
                     {tabs.map((tab) => (
                         <button
@@ -215,13 +273,32 @@ const AccountMaster = () => {
                                     }}
                                 >
                                     <span>{card.name}</span>
+                                    <div className="flex gap-1 items-center justify-center">
+                        <span
+                            className="top-clr rounded-full border p-2 cursor-pointer"
+                            data-tooltip-id="edit-notes"
+                            onClick={(e) => {
+                                e.stopPropagation();  
+                                handleMajorEdit(card);     
+                    }}
+                        >
+                            {React.cloneElement(icons.editIcon, { size: 18 })}
+                        </span>
+                        <span
+                            className="top-clr rounded-full border p-2 cursor-pointer"
+                            data-tooltip-id="delete"
+                            onClick={() => handleDelete({...card, headType: "major"})}
+                        >
+                            {React.cloneElement(icons.deleteIcon, { size: 18, color: "#eb8934" })}
+                        </span>
+                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
                     {/* Sub Head */}
                 <div className="w-full  flex flex-col h-full min-h-0">
-                    <div className="bg-white pr-2 rounded-lg darkCardBg ">
+                    <div className="bg-white pr-2 rounded-lg ">
                         <div className="bg-white rounded-lg  flex items-center justify-between">
                             <div className="flex items-center">
                                 <div className="flex items-center justify-center p-3">
@@ -249,16 +326,23 @@ const AccountMaster = () => {
                             </button> */}
                             <div className="flex items-center">
                                 <div className="me-3">
-                                    <IconButton
-                                        label="Add"
-                                        icon={icons.plusIcon}
-                                        onClick={() => {
-                                            setIsApproveModal(true);
-                                            setIsUpdate(false); 
-                                            setSelectedData({ headType: "sub" });
-                                        }
-                                        }
-                                    />
+                                        <IconButton
+                                            label="Add"
+                                            icon={icons.plusIcon}
+                                            // disabled={!currentMajorHead}
+                                            onClick={() => {
+                                                if (currentMajorHead) {
+                                                    setIsApproveModal(true);
+                                                    setIsUpdate(false); 
+                                                    setSelectedData({
+                                                        headType: "sub",
+                                                        section: currentMajorHead.section,
+                                                        majorhead: currentMajorHead.name,
+                                                        id:currentMajorHead.id
+                                                    });
+                                                }
+                                            }}
+                                        />
                                 </div>
                             </div>
                         </div>
@@ -278,28 +362,12 @@ const AccountMaster = () => {
                             </>
                         ) : !loading ? (
                             <div className="flex justify-center items-center h-40 text-gray-500 text-lg font-semibold">
-                                No Data Found
+                                No Data Found 
                             </div>
                         ) : (
                             <Loader />
                         )}
                     </div>
-                    {/* <CreateAccountsMaster
-                        isCreateModal={isApproveModal}
-                        setIsCreateModal={setIsApproveModal}
-                        onClose={handleModalClose}
-                        setToastData={setToastData}
-                        IsUpdate={isUpdate}
-                        data={selectedData}
-                    /> */}
-                    {/* <CreateHeadsData
-                        isCreateModal={isApproveModal}
-                        setIsCreateModal={setIsApproveModal}
-                        onClose={handleModalClose}
-                        setToastData={setToastData}
-                        IsUpdate={isUpdate}
-                        data={selectedData}
-                    /> */}
                     <CreateMajorandSubHead
                         isCreateModal={isApproveModal}
                         setIsCreateModal={setIsApproveModal}
@@ -307,6 +375,7 @@ const AccountMaster = () => {
                         setToastData={setToastData}
                         IsUpdate={isUpdate}
                         data={selectedData}
+                        activeTab={activeTab}
                     />
                 </div>
             </div>  

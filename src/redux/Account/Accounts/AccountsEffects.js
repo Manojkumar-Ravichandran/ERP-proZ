@@ -76,6 +76,13 @@ export const getMajorHeadDropdownEffect = (data) => {
       data,
     });
 };
+export const majorHeadDeleteEffect = (data) => {
+    return leadInstance.request({
+      url: "/majorhead-delete",
+      method: "post",
+      data,
+    });
+};
 export const createSubHeadEffect = (datas) => {
     const data = JSON.stringify(datas);
     return leadInstance.request({
@@ -102,6 +109,13 @@ export const getSubHeadListEffect = (data) => {
 export const getSubHeadDropdownEffect = (data) => {
     return leadInstance.request({
       url: "/subhead-dropdown",
+      method: "post",
+      data,
+    });
+};
+export const subHeadDeleteEffect = (data) => {
+    return leadInstance.request({
+      url: "/subhead-delete",
       method: "post",
       data,
     });

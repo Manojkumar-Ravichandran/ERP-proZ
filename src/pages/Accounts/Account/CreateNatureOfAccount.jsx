@@ -2,16 +2,20 @@ import { useForm } from "react-hook-form";
 import FormInput from "../../../UI/Input/FormInput/FormInput";
 import Modal from "../../../UI/Modal/Modal";
 import { useEffect, useState } from "react";
-import SearchableSelector from "../../../UI/Select/selectBox";
-import { createNatureOfAccountEffect, getNatureOfAccountDropdownEffect, updateNatureOfAccountEffect } from "../../../redux/Account/Accounts/AccountsEffects";
+import { createAccountMasterEffect, getAccountMasterDropdownEffect, getNatureOfAccountDropdownEffect, updateAccountMasterEffect, updateNatureOfAccountEffect } from "../../../redux/Account/Accounts/AccountsEffects";
+import SingleCheckbox from "../../../UI/Input/CheckBoxInput/SingleCheckbox";
+import TextArea from "../../../UI/Input/TextArea/TextArea";
 
 const CreateNatureOfAccount = ({ isCreateModal, setIsCreateModal, onClose, setToastData, IsUpdate = false,
-    data = null, }) => {
+    data }) => {
+        console.log("from data:",data);
+        
     const {
         register,
         formState: { errors },
         handleSubmit,
         reset,
+        watch,
         setValue,
     } = useForm();
     useEffect(() => {
@@ -19,34 +23,72 @@ const CreateNatureOfAccount = ({ isCreateModal, setIsCreateModal, onClose, setTo
             setValue("uuid", data.uuid || "");
             setValue("section", data.section || "");
             setValue("name", data.name || "");
-        }else {
+            setValue("majorhead", data.majorhead || "");
+            setValue("subhead", data.subhead || "");
+        } else {
             reset();
         }
     }, [IsUpdate, data, setValue, reset]);
 
-    const [sectionOptions, setSectionOptions] = useState([]);
+    const [section, setSection] = useState([]);
+    const [majorHead, setMajorHead] = useState([]);
+    const [subHead, setSubHead] = useState([]);
+    const [depreciation, setDepreciation] = useState([]);
+    const [tds, setTds] = useState([]);
     useEffect(() => {
-        fetchSection();
+        fetchDropdowns();
     }, []);
 
 
-    const fetchSection = async() => {
-        try {
-            const response = await getNatureOfAccountDropdownEffect();
+    const fetchDropdowns = async () => {
+    try {
+        const response = await getAccountMasterDropdownEffect();
+        console.log("getAccountMasterDropdownEffect", response);
 
-            const options = [
-                { id: 1, label: "Assets", value: "assets" },
-                { id: 2, label: "Income", value: "income" },
-                { id: 3, label: "Expenses", value: "expenses" },
-                { id: 4, label: "Liability", value: "liability" }
-            ];
-    
-            setSectionOptions(options);
-        
-        } catch (error) {
-            console.error("Error fetching nature of account options:", error);
-        } 
+        const data = response?.data?.data || [];
+console.log("data111",data);
+
+        // const section = data.map(item => ({
+        //     label: item.section,
+        //     value: item.section,
+        // }));
+
+        // const majorhead = data.map(item => ({
+        //     label: item.majorhead,
+        //     value: item.majorhead,
+        // }));
+
+        // const subhead = data.map(item => ({
+        //     label: item.subhead,
+        //     value: item.subhead,
+        // }));
+
+        // const depreciation = data.map(item => ({
+        //     label: item.depreciation,
+        //     value: item.depreciation,
+        // }));
+
+        // const tds = data.map(item => ({
+        //     label: item.tds,
+        //     value: item.tds,
+        // }));
+        // console.log("Section Data:", section);
+        // console.log("Major Head Data:", majorhead);
+        // console.log("Sub Head Data:", subhead);
+        // console.log("Depreciation Data:", depreciation);
+        // console.log("TDS Data:", tds);
+
+        // setSection(section);
+        // setMajorHead(majorhead);
+        // setSubHead(subhead);
+        // setDepreciation(depreciation);
+        // setTds(tds);
+
+    } catch (error) {
+        console.error("Error fetching nature of account options:", error);
     }
+};
+
 
     const submitFormHandler = async (data) => {
         console.log("data Nature Of Account",data);
@@ -55,12 +97,19 @@ const CreateNatureOfAccount = ({ isCreateModal, setIsCreateModal, onClose, setTo
             if (IsUpdate) {
                 const updatePayload = {
                     uuid: data.uuid, // Assuming `uuid` is part of the `data` object
-                    name:data.name,
+                    name: data.name,
+                    section: data.section,
+                    majorhead: data.majorhead,
+                    subhead: data.subhead,
+                    depreciation: data.depreciation,
+                    tds: data.tds,
+                    details: data.details,
+                    is_edit: 1
                 };
                 console.log("updatePayload",updatePayload);
                 
-                const response = await updateNatureOfAccountEffect(updatePayload); // Call the update API
-                console.log("updateNatureOfAccountEffect",response);
+                const response = await updateAccountMasterEffect(updatePayload); // Call the update API
+                console.log("updateAccountMasterEffect",response);
                 
 
                 if (response?.success) {
@@ -72,14 +121,18 @@ const CreateNatureOfAccount = ({ isCreateModal, setIsCreateModal, onClose, setTo
                     throw new Error(response?.message || "Failed to update master entry");
                 }
             } else {
-                const createPayload = {
-
+                const payload = {
                     name: data.name,
                     section:data.section,
+                    majorhead:data.majorhead,
+                    subhead:data.subhead,
+                    depreciation:data.depreciation,
+                    tds:data.tds,
+                    details:data.details,
                     is_edit: 1,
                 };
 
-                const response = await createNatureOfAccountEffect(createPayload); // Call the create API
+                const response = await createAccountMasterEffect(payload); // Call the create API
                 
                 if (response?.success) {
                     setToastData({
@@ -124,20 +177,7 @@ const CreateNatureOfAccount = ({ isCreateModal, setIsCreateModal, onClose, setTo
                 <form
                     onSubmit={handleSubmit(submitFormHandler)}
                 >
-                    {!IsUpdate && (
-                        <div className="mb-4">
-                        <SearchableSelector
-                            id="section"
-                            label="Section"
-                            options={sectionOptions}
-                            placeholder="Select section"
-                            setValue={setValue}
-                            register={register}
-                            validation={{ required: "section is required" }}
-                            errors={errors}
-                        />
-                        </div>
-                    )}
+                    
                     <FormInput
                         label="Nature Of Account"
                         id="name"
@@ -146,11 +186,66 @@ const CreateNatureOfAccount = ({ isCreateModal, setIsCreateModal, onClose, setTo
                         register={register}
                         validation={{
                             required: "Nature Of Account is required",
-
                         }}
                         setValue={setValue}
                         errors={errors}
                     />
+                    <div className="mb-4">
+                    </div>
+                        <div className="mb-4">
+                            <input
+                                type="hidden"
+                                id="majorhead"
+                                {...register("majorhead")}
+                                value={watch("majorhead")} 
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <input
+                                type="hidden"
+                                id="subhead"
+                                {...register("subhead")}
+                                value={watch("subhead")} 
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <input
+                                type="hidden"
+                                id="section"
+                                {...register("section")}
+                                value={watch("section")} 
+                            />
+                        </div>
+                    <div className="mb-4">
+                    <SingleCheckbox
+                        id="isDepreciationApplicable"
+                        label="Depreciation is Applicable"
+                        register={register}
+                        defaultid={data?.isDepreciationApplicable}
+                        errors={errors}
+                    /></div>
+                    <div className="mb-4">
+                    <SingleCheckbox
+                        id="isTDSApplicable"
+                        label="TDS is Applicable"
+                        register={register}
+                        defaultid={data?.isTDSApplicable}
+                        errors={errors}
+                    /></div>
+                    <div className="mb-4">
+                    <TextArea
+                        id="details"
+                        label="Details"
+                        placeholder="Enter Details"
+                        register={register}
+                        validation={{
+                            maxLength: {
+                            value: 500,
+                            message: "Maximum 500 characters allowed"
+                            }
+                        }}
+                        errors={errors}
+                    /></div>
                     <input
                         type="hidden"
                         id="type"
