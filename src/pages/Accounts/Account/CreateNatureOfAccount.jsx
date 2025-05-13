@@ -2,13 +2,13 @@ import { useForm } from "react-hook-form";
 import FormInput from "../../../UI/Input/FormInput/FormInput";
 import Modal from "../../../UI/Modal/Modal";
 import { useEffect, useState } from "react";
-import { createAccountMasterEffect, getAccountMasterDropdownEffect, getNatureOfAccountDropdownEffect, updateAccountMasterEffect, updateNatureOfAccountEffect } from "../../../redux/Account/Accounts/AccountsEffects";
+import { createAccountMasterEffect, getAccountMasterDropdownEffect, getMajorHeadDropdownEffect, getNatureOfAccountDropdownEffect, getSubHeadDropdownEffect, updateAccountMasterEffect, updateNatureOfAccountEffect } from "../../../redux/Account/Accounts/AccountsEffects";
 import SingleCheckbox from "../../../UI/Input/CheckBoxInput/SingleCheckbox";
 import TextArea from "../../../UI/Input/TextArea/TextArea";
+import SearchableSelector from "../../../UI/Select/selectBox";
 
 const CreateNatureOfAccount = ({ isCreateModal, setIsCreateModal, onClose, setToastData, IsUpdate = false,
     data }) => {
-        console.log("from data:",data);
         
     const {
         register,
@@ -20,97 +20,127 @@ const CreateNatureOfAccount = ({ isCreateModal, setIsCreateModal, onClose, setTo
     } = useForm();
     useEffect(() => {
         if (IsUpdate && data) {
+            
             setValue("uuid", data.uuid || "");
             setValue("section", data.section || "");
-            setValue("name", data.name || "");
+            setValue("natureaccount", data.natureaccount || "");
             setValue("majorhead", data.majorhead || "");
-            setValue("subhead", data.subhead || "");
+            setValue("subhead", data.subhead  || "");
+            setValue("details", data.details || ""); 
+            setValue("depreciation", data.depreciation || false); 
+            setValue("tds", data.tds || false)
+
+            setSelectedSection(data.section || "");
+        setSelectedMajorHead(data.majorhead || "");
         } else {
+            setValue("section", data?.section || ""); 
+            setValue("majorhead", data?.majorhead || "");
+            setValue("subhead", data?.subhead || "");
+            setValue("depreciation", data?.deprecitation || false);
+            setValue("tds", data?.tds || false);
+
+            if (data?.section) {
+            setSelectedSection(data.section);
+        }
+        if (data?.majorhead) {
+            setSelectedMajorHead(data.majorhead);
+        }
             reset();
         }
     }, [IsUpdate, data, setValue, reset]);
 
+    const [loading, setLoading] = useState(false);
     const [section, setSection] = useState([]);
-    const [majorHead, setMajorHead] = useState([]);
-    const [subHead, setSubHead] = useState([]);
-    const [depreciation, setDepreciation] = useState([]);
-    const [tds, setTds] = useState([]);
+    const [majorhead, setMajorHead] = useState([]);
+    
+    const [subhead, setSubHead] = useState([]);
+
     useEffect(() => {
         fetchDropdowns();
     }, []);
-
+const [selectedSection, setSelectedSection] = useState("");
+const [selectedMajorHead, setSelectedMajorHead] = useState("");
 
     const fetchDropdowns = async () => {
-    try {
-        const response = await getAccountMasterDropdownEffect();
-        console.log("getAccountMasterDropdownEffect", response);
+        setLoading(true);
+        try {
+                const options = [
+                    { id: 1, label: "Assets", value: "assets" },
+                    { id: 2, label: "Income", value: "income" },
+                    { id: 3, label: "Expenses", value: "expenses" },
+                    { id: 4, label: "Liability", value: "liability" }
+                ];
+                    setSection(options);
+                } catch (error) {
+                    console.error("Error fetching nature of account options:", error);
+                } finally {
+                    setLoading(false);
+                }
+        try {
+        const response = await getMajorHeadDropdownEffect();
 
         const data = response?.data?.data || [];
-console.log("data111",data);
+        const filteredMajorHead = data.filter(item => 
+            !selectedSection || item.section === selectedSection
+        );
+        const majorheadOptions = filteredMajorHead.map(item => ({
+            label: item.name,
+            value: item.id,
+        }));
 
-        // const section = data.map(item => ({
-        //     label: item.section,
-        //     value: item.section,
-        // }));
+        setMajorHead(majorheadOptions);
 
-        // const majorhead = data.map(item => ({
-        //     label: item.majorhead,
-        //     value: item.majorhead,
-        // }));
+    } catch (error) {
+        console.error("Error fetching nature of account options:", error);
+    }
+        try {
+        const response = await getSubHeadDropdownEffect();
+
+        const data = response?.data?.data || [];
 
         // const subhead = data.map(item => ({
-        //     label: item.subhead,
-        //     value: item.subhead,
+        //     label: item.name,
+        //     value: item.id,
         // }));
 
-        // const depreciation = data.map(item => ({
-        //     label: item.depreciation,
-        //     value: item.depreciation,
-        // }));
-
-        // const tds = data.map(item => ({
-        //     label: item.tds,
-        //     value: item.tds,
-        // }));
-        // console.log("Section Data:", section);
-        // console.log("Major Head Data:", majorhead);
-        // console.log("Sub Head Data:", subhead);
-        // console.log("Depreciation Data:", depreciation);
-        // console.log("TDS Data:", tds);
-
-        // setSection(section);
-        // setMajorHead(majorhead);
-        // setSubHead(subhead);
-        // setDepreciation(depreciation);
-        // setTds(tds);
+        const filteredSubHead = data.filter(item =>
+            !selectedMajorHead || item.majorhead === selectedMajorHead
+        );
+        const subheadOptions = filteredSubHead.map(item => ({
+            label: item.name,
+            value: item.id,
+        }));
+        setSubHead(subheadOptions);
 
     } catch (error) {
         console.error("Error fetching nature of account options:", error);
     }
 };
-
+useEffect(() => {
+    fetchDropdowns();
+}, [selectedSection]);
+useEffect(() => {
+    fetchDropdowns();
+}, [selectedMajorHead]);
 
     const submitFormHandler = async (data) => {
-        console.log("data Nature Of Account",data);
-        
+        const depreciation = data.depreciation ? "yes" : "no";
+            const tds = data.tds ? "yes" : "no";
         try {
             if (IsUpdate) {
                 const updatePayload = {
                     uuid: data.uuid, // Assuming `uuid` is part of the `data` object
-                    name: data.name,
+                    natureaccount: data.natureaccount,
                     section: data.section,
                     majorhead: data.majorhead,
                     subhead: data.subhead,
-                    depreciation: data.depreciation,
-                    tds: data.tds,
+                    depreciation: data.depreciation ? "yes" : "no",
+                    tds: data.tds ? "yes" : "no",
                     details: data.details,
                     is_edit: 1
                 };
-                console.log("updatePayload",updatePayload);
                 
                 const response = await updateAccountMasterEffect(updatePayload); // Call the update API
-                console.log("updateAccountMasterEffect",response);
-                
 
                 if (response?.success) {
                     setToastData({
@@ -122,13 +152,13 @@ console.log("data111",data);
                 }
             } else {
                 const payload = {
-                    name: data.name,
-                    section:data.section,
-                    majorhead:data.majorhead,
-                    subhead:data.subhead,
-                    depreciation:data.depreciation,
-                    tds:data.tds,
-                    details:data.details,
+                    natureaccount: data?.natureaccount,
+                    section:data?.section || "",
+                    majorhead:data?.majorhead || "",
+                    subhead:data?.subhead || "",
+                    depreciation:depreciation,
+                    tds:tds,
+                    details:data?.details || "",
                     is_edit: 1,
                 };
 
@@ -160,6 +190,8 @@ console.log("data111",data);
             if (onClose) onClose();
         }
     };
+   
+
 
 
 
@@ -180,56 +212,76 @@ console.log("data111",data);
                     
                     <FormInput
                         label="Nature Of Account"
-                        id="name"
+                        id="natureaccount"
                         type="text"
                         placeholder="Enter Nature Of Account"
                         register={register}
                         validation={{
                             required: "Nature Of Account is required",
                         }}
+                        value={watch("natureaccount")}
                         setValue={setValue}
                         errors={errors}
                     />
                     <div className="mb-4">
+                        <SearchableSelector
+                            id="section"
+                            label="Section"
+                            options={section}
+                            placeholder="Select Section"
+                            setValue={(id, value) => {
+                                setValue("section", value);
+                                setSelectedSection(value); 
+                            }}
+                            defaultValue={watch("section")}
+                            register={register}
+                            validation={{ required: "Section is required" }}
+                            errors={errors}
+                        />
                     </div>
                         <div className="mb-4">
-                            <input
-                                type="hidden"
+                            <SearchableSelector
+                                label="Major Head"
                                 id="majorhead"
-                                {...register("majorhead")}
-                                value={watch("majorhead")} 
+                                placeholder="Select Major Head"
+                                options={majorhead}
+                                defaultValue={watch("majorhead")}
+                                setValue={(id, value) => {
+                                    setValue("majorhead", value);
+                                    setSelectedMajorHead(value);
+                                }}
+                                register={register}
+                                validation={{ required: "Select Major Head" }}
+                                errors={errors}
                             />
                         </div>
                         <div className="mb-4">
-                            <input
-                                type="hidden"
+                            <SearchableSelector
+                                label="SubHead"
                                 id="subhead"
-                                {...register("subhead")}
-                                value={watch("subhead")} 
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <input
-                                type="hidden"
-                                id="section"
-                                {...register("section")}
-                                value={watch("section")} 
+                                placeholder="Select SubHead"
+                                options={subhead}
+                                defaultValue={watch("subhead")}
+                                setValue={(id, value) => {
+                                    setValue("subhead", value);
+                                }}
+                                register={register}
+                                validation={{ required: "Select Major Head" }}
+                                errors={errors}
                             />
                         </div>
                     <div className="mb-4">
                     <SingleCheckbox
-                        id="isDepreciationApplicable"
+                        id="depreciation"
                         label="Depreciation is Applicable"
                         register={register}
-                        defaultid={data?.isDepreciationApplicable}
                         errors={errors}
                     /></div>
                     <div className="mb-4">
                     <SingleCheckbox
-                        id="isTDSApplicable"
+                        id="tds"
                         label="TDS is Applicable"
                         register={register}
-                        defaultid={data?.isTDSApplicable}
                         errors={errors}
                     /></div>
                     <div className="mb-4">

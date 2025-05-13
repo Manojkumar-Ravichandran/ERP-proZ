@@ -150,3 +150,10 @@ export const getAccountMasterDropdownEffect = (data) => {
       data,
     });
 };
+export const getAccountMasterDeleteEffect = (data) => {
+    return leadInstance.request({
+      url: "/accountsmaster-delete",
+      method: "post",
+      data,
+    });
+};

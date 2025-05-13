@@ -8,11 +8,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import icons from "../../../contents/Icons";
 import CreateNatureOfAccount from "./CreateNatureOfAccount";
-import { getAccountMasterListEffect, getNatureOfAccountListEffect } from "../../../redux/Account/Accounts/AccountsEffects";
-import { formatDateToYYYYMMDD } from "../../../utils/Date";
+import { getAccountMasterDeleteEffect, getAccountMasterListEffect } from "../../../redux/Account/Accounts/AccountsEffects";
 import { useDispatch } from "react-redux";
-import DropdownButton from "../../../UI/Buttons/DropdownBtn/DropdownBtn";
 import FilterDropdown from "../../../components/DropdownFilter/FilterDropdown";
+import "../Account/Natureaccount.css"
 const NatureOfAccount = () => {
     const {
         reset,
@@ -21,20 +20,18 @@ const NatureOfAccount = () => {
     const [activeFilter, setActiveFilter] = useState("");
     const [paginationPageSize, setPaginationPageSize] = useState(10);
     const [paginationCurrentPage, setPaginationCurrentPage] = useState(1);
-    const [selectedSection, setSelectedSection] = useState();
-    const [isDepOpen, setIsDepOpen] = useState(true);
-    const [isTDSOpen, setIsTDSOpen] = useState(true);
-    const [closedType, setClosedType] = useState("");
+    const [selectedSection, setSelectedSection] = useState("assets");
+    const [isDepOpen, setIsDepOpen] = useState(false);
+    const [isTDSOpen, setIsTDSOpen] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [isApproveModal, setIsApproveModal] = useState(false);
     const [toastData, setToastData] = useState({ show: false });
     const [loading, setLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState("assets");
     const [accountList, setAccountList] = useState({ data: [] });
-    const [section, setSection] = useState("");
     const [filters, setFilters] = useState({status: ""});
     const [isUpdate, setIsUpdate] = useState(false);
     const [selectedData, setSelectedData] = useState(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -43,7 +40,8 @@ const NatureOfAccount = () => {
         setToastData(() => ({ ...toastData, show: false }));
     };
     const handleSectionChange = (selectedOption) => {
-        setFilters((prev) => ({ ...prev, status: selectedOption || "" }));
+        setSelectedSection(selectedOption);
+        setFilters((prev) => ({ ...prev, section: selectedOption || "" }));
     };
     const breadcrumbItems = [
         { id: 1, label: "Home", link: "/user" },
@@ -52,7 +50,18 @@ const NatureOfAccount = () => {
 
     const handleEdit = (data) => {
         setIsUpdate(true);
-        setSelectedData(data);
+        setSelectedData({
+            uuid: data.uuid,
+            natureaccount: data.natureaccount,
+            section: data.section,
+            majorhead_name: data.majorhead_name,
+            majorhead: data.majorhead,
+            subhead_name: data.subhead_name,
+            subhead:data.subhead,
+            depreciation: data.depreciation === "yes",
+            tds: data.tds === "yes",
+            details: data.details || "",
+        });
         setIsApproveModal(true);
     };
 
@@ -63,43 +72,34 @@ const NatureOfAccount = () => {
         { value: "income", label: "Income" },
     ];
     
-    // useEffect(() => {
-    //     fetchAccountList (searchText);
-    // }, [searchText,activeTab,paginationPageSize, paginationCurrentPage,selectedSection]);
-    
     const fetchAccountList  = async() => {
         setLoading(true);
         try {
             const payload = {
-                section: selectedSection  || "",
+                section: selectedSection,
                 majorhead: "",
                 subhead: "",
-                depreciation:"",
-                tds:"",
-                search: searchText.trim(),
+                depreciation:isDepOpen ? "yes" : "no",
+                tds:isTDSOpen ? "yes" : "no",
+                search: searchText,
             };
             const response = await getAccountMasterListEffect(payload);
-            console.log("getAccountMasterListEffect",response);
 
             const data = response?.data?.data?.data || [];
-            console.log("datya",data);
-
-            // const filteredData = data.filter(item => item.section === section);
-            // console.log("datya",filteredData);
-            // const filteredData = data.filter(item => {
-            // const matchesSection = section ? item.section === section : true;
-            // const matchesSearch = search
-            //     ? item.name.toLowerCase().includes(search.toLowerCase())
-            //     : true;
-            // return matchesSection && matchesSearch;
-            // });
 
             const formattedData = data.map(item => ({
                 uuid: item.uuid,
                 name: item.name,
                 section: item.section,
+                natureaccount: item.natureaccount,
+                majorhead_name: item.majorhead_name,
+                majorhead: item.majorhead,
+                subhead_name: item.subhead_name,
+                subhead: item.subhead,
+                depreciation: item.depreciation,
+                tds: item.tds,
+                details: item.details || "",
             }));
-            console.log("formattedData",formattedData);
             
             setAccountList({ data: formattedData });
         } catch (error) {
@@ -109,32 +109,29 @@ const NatureOfAccount = () => {
         }
     };
     useEffect(() => {
-        fetchAccountList();
-    }, [selectedSection, searchText, paginationPageSize, paginationCurrentPage]);
+        fetchAccountList(searchText);
+    }, [selectedSection, searchText, paginationPageSize, paginationCurrentPage,, isDepOpen, isTDSOpen]);
 
-    // const handleClearFilters = () => {
-    //     setActiveFilter("Open");
-    //     setSearchText('')
-    //     setSelectedSection(null);
-    //     setActiveTab("asstes");
-    //     fetchAccountList();
-    // };
     const handleSearchChange = (e) => {
         setSearchText(e.target.value);
         setPaginationCurrentPage(1); 
     };
     const handleClearFilters = () => {
         setSearchText('');
-        setSelectedSection('');
+        setSelectedSection("assets");
+        setIsDepOpen(false);
+        setIsTDSOpen(false);
+        setFilters({ section: "assets" });
         fetchAccountList(); 
     };
     const columnDefs = [
-        { headerName: "Nature Of The Account", field: "name", unSortIcon: true },
+        { headerName: "Nature Of The Account", field: "natureaccount", unSortIcon: true },
         { headerName: "Section", field: "section", unSortIcon: true },
         { headerName: "Major Head", field: "majorhead_name", unSortIcon: true },
         { headerName: "Sub Head", field: "subhead_name", unSortIcon: true },
         { headerName: "Depreciation", field: "depreciation", unSortIcon: true },
         { headerName: "TDS", field: "tds", unSortIcon: true },
+        { headerName: "Details", field: "details", unSortIcon: true },
         {
             headerName: "Action",
             field: "action",
@@ -153,8 +150,8 @@ const NatureOfAccount = () => {
                     </span>
                     <span
                         className="top-clr rounded-full border p-2 cursor-pointer"
-                        data-tooltip-id="edit-notes"
-                        // onClick={() => handleSubEdit(params?.data)}
+                        data-tooltip-id="delete"
+                        onClick={() => openDeleteModal(params?.data)}
                     >
                         {React.cloneElement(icons.deleteIcon, { size: 18,color: "#eb8934" })}
                     </span>
@@ -162,20 +159,50 @@ const NatureOfAccount = () => {
             ),
         },
     ];
-    const handleDepreciationToggle = () => {
-    const tds = !isDepOpen;
-    setIsDepOpen(tds);
-    const newFilter = tds ? "Open" : "Closed";
-    setActiveFilter(newFilter);
-    // getLeadList(newFilter, stage, clickedClosedType);
+    const openDeleteModal = (data) => {
+        setSelectedData(data);
+        setIsDeleteModalOpen(true);
+    };
+    const handleDelete = async (data) => {
+    
+            setLoading(true);
+            try {
+                const payload = { uuid: selectedData.uuid };
+                let response;
+                    response = await getAccountMasterDeleteEffect(payload);
+               
+    
+                if (response?.status === 200) {
+                    setToastData({
+                        type: "success",
+                        message: " Nature Of AccountDeleted successfully",
+                    })
+                }
+                setIsDeleteModalOpen(false);
+                 fetchAccountList();
+            } catch (error) {
+                console.error("Failed to delete:", error);
+                setToastData({
+                    type: "error",
+                    message: error?.response?.data?.message || error.message || "An error occurred",
+                });
+            } finally {
+                setLoading(false);
+                reset();
+            }
+    }
+    const cancelDelete = () => {
+    setIsDeleteModalOpen(false);
+    setSelectedData(null);
   };
-    const handleTDSToggle = () => {
-    const tds = !isTDSOpen;
-    setIsTDSOpen(tds);
-    const newFilter = tds ? "Open" : "Closed";
-    setActiveFilter(newFilter);
-    // getLeadList(newFilter, stage, clickedClosedType);
-  };
+
+const handleDepreciationToggle = () => {
+    setIsDepOpen((prev) => !prev);
+};
+
+const handleTDSToggle = () => {
+    setIsTDSOpen((prev) => !prev);
+};
 
     const handleModalClose = () => {
         setIsApproveModal(false);
@@ -205,7 +232,7 @@ const NatureOfAccount = () => {
                                 placeholder="Section"
                                 showClearButton={true}
                                 onFilter={handleSectionChange}
-
+                                value={selectedSection}
                             />
                             <button
                                 className="chips text-white px-1 py-1 rounded transition float-end gap-2"
@@ -233,7 +260,7 @@ const NatureOfAccount = () => {
                                     <div className="toggle-container">
                                         <div
                                             onClick={handleDepreciationToggle}
-                                            className={`toggle-switch ${isDepOpen ? "bg-blue-500" : "bg-gray-0"
+                                            className={`toggle-switch-1 ${isDepOpen ? "bg-blue-500" : "bg-gray-0"
                                             }`}
                                         >
                                             <span
@@ -247,7 +274,7 @@ const NatureOfAccount = () => {
                                             Depreciation
                                             </span>
                                             <div
-                                            className={`toggle-button ${isDepOpen ? "translate-x-8" : "translate-x-0"
+                                            className={`toggle-button ${isDepOpen ? "translate-x-9" : "translate-x-0"
                                                 }`}
                                             ></div>
                                         </div>
@@ -255,7 +282,7 @@ const NatureOfAccount = () => {
                                     <div className="toggle-container">
                                         <div
                                             onClick={handleTDSToggle}
-                                            className={`toggle-switch ${isTDSOpen ? "bg-blue-500" : "bg-gray-0"
+                                            className={`toggle-switch  w-200 ${isTDSOpen ? "bg-blue-500" : "bg-gray-0"
                                             }`}
                                         >
                                             <span
@@ -282,14 +309,13 @@ const NatureOfAccount = () => {
                                                 setIsApproveModal(true);
                                                 setIsUpdate(false);
                                                 setSelectedData({
-                                                    section:section,
+                                                    section:selectedSection,
+                                                    deprecitation:isDepOpen,
+                                                    tds:isTDSOpen,
                                                 });
                                             }}
                                         />
                                     </div>
-                                    {/* <div>
-                                        <ExportButton label="Export" data={leadList} filename="Nature Account List" />
-                                    </div> */}
                                 </div>
                             </div>
                         </div>
@@ -323,6 +349,34 @@ const NatureOfAccount = () => {
                             data={selectedData}
                         />
                     </div>
+                    {/* delete */}
+      {isDeleteModalOpen && (
+        <div className="delete-modal">
+          <div className="modal-content-del darkCardBg">
+            <div className="flex items-center justify-between">
+              <h4>Confirm Delete</h4>
+              <button className="modal-close" onClick={cancelDelete}>
+                {" "}
+                &times;
+              </button>
+            </div>
+            <hr />
+            <p className="pt-4">Are you sure you want to delete this item?</p>
+            <div className="modal-actions">
+              <button
+                onClick={handleDelete}
+                className="btn btn-danger"
+                loading={loading}
+              >
+                Yes, Delete
+              </button>
+              <button onClick={cancelDelete} className="btn btn-secondary">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
                 </div>
     );
 };

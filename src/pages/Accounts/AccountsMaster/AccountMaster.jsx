@@ -1,14 +1,12 @@
 import { Loader } from "rsuite";
-import CreateAccountsMaster from "./CreateAccountsMaster";
 import ReusableAgGrid from "../../../UI/AgGridTable/AgGridTable";
 import IconButton from "../../../UI/Buttons/IconButton/IconButton";
 import icons from "../../../contents/Icons";
 import { useForm } from "react-hook-form";
-import { getAccountMasterListEffect, getMajorHeadListEffect, getSubHeadListEffect, majorHeadDeleteEffect, subHeadDeleteEffect } from "../../../redux/Account/Accounts/AccountsEffects";
+import { getMajorHeadListEffect, getSubHeadListEffect, majorHeadDeleteEffect, subHeadDeleteEffect } from "../../../redux/Account/Accounts/AccountsEffects";
 import React, { useEffect, useState } from "react";
 import Breadcrumps from "../../../UI/Breadcrumps/Breadcrumps";
 import AlertNotification from "../../../UI/AlertNotification/AlertNotification";
-import CreateHeadsData from "../Account/CreateHeadData";
 import CreateMajorandSubHead from "./CreateMajorandSubHead";
 
 const AccountMaster = () => {
@@ -27,6 +25,7 @@ const AccountMaster = () => {
     const [selectedSection, setSelectedSection] = useState();
     const [majorHeadList, setMajorHeadList] = useState([]);
     const [subHeadList, setSubHeadList] = useState([]);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     
 
     const toastOnclose = () => {
@@ -37,8 +36,6 @@ const AccountMaster = () => {
         { id: 2, label: "Account Master" },
     ];
     const handleMajorEdit = (data) => {
-        console.log("handleMajorEdit",data);
-        
         setIsUpdate(true);
         setSelectedData(data);
         setIsApproveModal(true);
@@ -76,7 +73,7 @@ const AccountMaster = () => {
                         <span
                             className="top-clr rounded-full border p-2 cursor-pointer"
                             data-tooltip-id="delete"
-                            onClick={() => handleDelete(params?.data)}
+                            onClick={() => openDeleteModal(params?.data)}
                         >
                             {React.cloneElement(icons.deleteIcon, { size: 18,color: "#eb8934" })}
                         </span>
@@ -113,7 +110,6 @@ const AccountMaster = () => {
             majorhead: item.majorhead_name || majorhead,
         }));
 
-        console.log("formattedData", formattedData);
         setSubHeadList({ data: formattedData });
 
     } catch (error) {
@@ -153,10 +149,11 @@ const AccountMaster = () => {
     }
 };
 
+const openDeleteModal = (data) => {
+        setIsDeleteModalOpen(true);
+    };
 const handleDelete = async (data) => {
-    const confirmDelete = window.confirm(`Are you sure you want to delete "${data.name}"?`);
 
-    if (confirmDelete) {
         setLoading(true);
         try {
             const payload = {
@@ -186,20 +183,21 @@ const handleDelete = async (data) => {
                 type: "error",
                 message: error?.response?.data?.message || error.message || "An error occurred",
             });
+            setIsDeleteModalOpen(false);
         } finally {
             setLoading(false);
             reset();
         }
-    }
 }
+const cancelDelete = () => {
+    setIsDeleteModalOpen(false);
+  };
     const handleClearFilters = () => {
         setSearchText('')
         setSelectedSection(null);
         setActiveTab("liability");
     };
     const handleCardClick = (card) => {
-        console.log("handleCardClick",card);
-        
         setActiveCard(card.id);
         setCurrentMajorHead(card);
         setSelectedData({ headType: "major", majorhead: card.name, section: card.section, id:card.id });
@@ -287,7 +285,7 @@ const handleDelete = async (data) => {
                         <span
                             className="top-clr rounded-full border p-2 cursor-pointer"
                             data-tooltip-id="delete"
-                            onClick={() => handleDelete({...card, headType: "major"})}
+                            onClick={() => openDeleteModal({...card, headType: "major"})}
                         >
                             {React.cloneElement(icons.deleteIcon, { size: 18, color: "#eb8934" })}
                         </span>
@@ -318,12 +316,6 @@ const handleDelete = async (data) => {
                                     </div>
                                 </div>
                             </div>
-                            {/* <button
-                                className="chips text-white px-1 py-1 rounded transition float-end gap-2"
-                                onClick={handleClearFilters}
-                            >
-                                <span>{icons.clear}</span> Clear Filters
-                            </button> */}
                             <div className="flex items-center">
                                 <div className="me-3">
                                         <IconButton
@@ -378,6 +370,34 @@ const handleDelete = async (data) => {
                         activeTab={activeTab}
                     />
                 </div>
+                {/* delete */}
+      {isDeleteModalOpen && (
+        <div className="delete-modal">
+          <div className="modal-content-del darkCardBg">
+            <div className="flex items-center justify-between">
+              <h4>Confirm Delete</h4>
+              <button className="modal-close" onClick={cancelDelete}>
+                {" "}
+                &times;
+              </button>
+            </div>
+            <hr />
+            <p className="pt-4">Are you sure you want to delete this item?</p>
+            <div className="modal-actions">
+              <button
+                onClick={handleDelete}
+                className="btn btn-danger"
+                loading={loading}
+              >
+                Yes, Delete
+              </button>
+              <button onClick={cancelDelete} className="btn btn-secondary">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
             </div>  
         </div>
 

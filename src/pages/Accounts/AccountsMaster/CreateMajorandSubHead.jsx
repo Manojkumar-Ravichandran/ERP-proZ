@@ -3,11 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "../../../UI/Modal/Modal";
 import FormInput from "../../../UI/Input/FormInput/FormInput";
-import SearchableSelector from "../../../UI/Select/selectBox";
-import { createMajorHeadEffect, createSubHeadEffect, getMajorHeadDropdownEffect, getMajorHeadEffect, getMajorHeadListEffect, getNatureOfAccountDropdownEffect, getNatureOfAccountListEffect, getSubHeadDropdownEffect, updateMajorHeadEffect, updateSubHeadEffect } from "../../../redux/Account/Accounts/AccountsEffects";
+import { createMajorHeadEffect, createSubHeadEffect, getMajorHeadDropdownEffect, getNatureOfAccountDropdownEffect, updateMajorHeadEffect, updateSubHeadEffect } from "../../../redux/Account/Accounts/AccountsEffects";
 const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setToastData, IsUpdate = false,
     data, activeTab }) => {
-    console.log("Selected Data:", data);
 
     const {
         register,
@@ -20,7 +18,6 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
 
     useEffect(() => {
         if (IsUpdate && data) {
-            console.log("data", data);
 
             const type = data.headType || "major";
             setHeadType(type);
@@ -44,7 +41,6 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
             setValue("section", data?.section || activeTab);
             setValue("natureaccount", 1);
             if (type === "sub") {
-                console.log("2222222",data);
                 
                 setValue("majorhead", data?.majorhead || "");
                 setValue("id", data?.id || "");
@@ -58,7 +54,6 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
     const [natureOptions, setNatureOptions] = useState(5);
     const [majorHeadOptions, setMajorHeadOptions] = useState([]);
     const [sectionOptions, setSectionOptions] = useState([]);
-    console.log("sectionOptions", sectionOptions);
 
 
     useEffect(() => {
@@ -75,7 +70,6 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
             ];
 
             const activeTabOption = options.find(option => option.value === activeTab);
-            console.log("activeTabOption", activeTabOption);
 
             if (!activeTabOption) {
                 options.push({ id: options.length + 1, label: activeTab, value: activeTab });
@@ -83,12 +77,10 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
 
             setSectionOptions(options);
             const response = await getNatureOfAccountDropdownEffect({ section: "" });
-            console.log("getNatureOfAccountDropdownEffect", response);
             const natureOptions = response?.data?.data?.map(item => ({
                 label: item.name,
                 value: item.id,
             })) || [];
-            console.log("natureOptions", natureOptions);
 
             setNatureOptions(natureOptions);
         } catch (error) {
@@ -99,13 +91,11 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
         // for Sub head create dropdown
         try {
             const response = await getMajorHeadDropdownEffect({ section: "" });
-            console.log("getMajorHeadDropdownEffect", response);
 
             const majorHeadOptions = response?.data?.data?.map(item => ({
                 label: item.name,
                 value: item.name,
             })) || [];
-            console.log("majorHeadOptions", majorHeadOptions);
 
             setMajorHeadOptions(majorHeadOptions);
         } catch (error) {
@@ -115,7 +105,6 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
         }
     };
     const submitFormHandler = async (data) => {
-        console.log("create head", data);
 
         try {
 
@@ -125,10 +114,8 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
                         uuid: data.uuid, // Assuming `uuid` is part of the `data` object
                         name: data.name,
                     };
-                    console.log("updatemajorPayload", updatemajorPayload);
 
-                    const response = await updateMajorHeadEffect(updatemajorPayload); // Call the update API
-                    console.log("updateMajorHeadEffect", response);
+                    const response = await updateMajorHeadEffect(updatemajorPayload); 
 
                     if (response?.success) {
                         setToastData({
@@ -139,13 +126,11 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
                 } else if (headType === "sub") {
 
                     const updatesubPayload = {
-                        uuid: data.uuid, // Assuming `uuid` is part of the `data` object
+                        uuid: data.uuid,
                         name: data.name,
                     };
-                    console.log("updatesubPayload", updatesubPayload);
 
                     const response = await updateSubHeadEffect(updatesubPayload);
-                    console.log("updateSubHeadEffect", response);
 
                     if (response?.success) {
                         setToastData({
@@ -223,26 +208,6 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
                 <form
                     onSubmit={handleSubmit(submitFormHandler)}
                 >
-                    {!IsUpdate && (
-                        <div className="mb-4">
-                            {/* <FormInput
-                        label="Nature of Account"
-                        id="natureaccount"
-                        type="text"
-                        placeholder="Select Nature of Account"
-                        register={register}
-                        disabled={true}
-                        validation={{ required: "Nature of Account is required" }}
-                        errors={errors}
-                    /> */}
-                            {/* <input
-                                type="hidden"
-                                id="natureaccount"
-                                value={watch("natureaccount")} // Set value from watch to bind the form value
-                                {...register("natureaccount", { required: "Nature of Account is required" })}
-                            /> */}
-                        </div>
-                    )}
                     {!IsUpdate && headType === "sub" && (
                         <div className="mb-4">
                             <input
