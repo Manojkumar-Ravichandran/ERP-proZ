@@ -20,7 +20,7 @@ const NatureOfAccount = () => {
     const [activeFilter, setActiveFilter] = useState("");
     const [paginationPageSize, setPaginationPageSize] = useState(10);
     const [paginationCurrentPage, setPaginationCurrentPage] = useState(1);
-    const [selectedSection, setSelectedSection] = useState("assets");
+    const [selectedSection, setSelectedSection] = useState("all");
     const [isDepOpen, setIsDepOpen] = useState(false);
     const [isTDSOpen, setIsTDSOpen] = useState(false);
     const [searchText, setSearchText] = useState("");
@@ -66,6 +66,7 @@ const NatureOfAccount = () => {
     };
 
     const sectionFilter = [
+        { value: "all", label: "All" },
         { value: "assets", label: "Assets" },
         { value: "liability", label: " Liability" },
         { value: "expenses", label: "Expenses" },
@@ -76,11 +77,13 @@ const NatureOfAccount = () => {
         setLoading(true);
         try {
             const payload = {
-                section: selectedSection,
+                section: selectedSection === "all" ? "" : selectedSection,
                 majorhead: "",
                 subhead: "",
-                depreciation:isDepOpen ? "yes" : "no",
-                tds:isTDSOpen ? "yes" : "no",
+                depreciation: selectedSection === "all" ? "" : (isDepOpen ? "yes" : "no"),
+                tds:selectedSection === "all" ? "" : (isTDSOpen ? "yes" : "no"),
+                // depreciation:isDepOpen ? "yes" : "no",
+                // tds:isTDSOpen ? "yes" : "no",
                 search: searchText,
             };
             const response = await getAccountMasterListEffect(payload);
@@ -118,10 +121,10 @@ const NatureOfAccount = () => {
     };
     const handleClearFilters = () => {
         setSearchText('');
-        setSelectedSection("assets");
+        setSelectedSection("all");
         setIsDepOpen(false);
         setIsTDSOpen(false);
-        setFilters({ section: "assets" });
+        setFilters({ section: "all" });
         fetchAccountList(); 
     };
     const columnDefs = [
@@ -230,7 +233,7 @@ const handleTDSToggle = () => {
                             <FilterDropdown
                                 options={sectionFilter}
                                 placeholder="Section"
-                                showClearButton={true}
+                                // showClearButton={true}
                                 onFilter={handleSectionChange}
                                 value={selectedSection}
                             />
@@ -309,9 +312,9 @@ const handleTDSToggle = () => {
                                                 setIsApproveModal(true);
                                                 setIsUpdate(false);
                                                 setSelectedData({
-                                                    section:selectedSection,
-                                                    deprecitation:isDepOpen,
-                                                    tds:isTDSOpen,
+                                                    section:selectedSection === "all" ? "" : selectedSection,
+                                                    deprecitation:selectedSection === "all" ? "" : isDepOpen,
+                                                    tds:selectedSection === "all" ? "" : isTDSOpen,
                                                 });
                                             }}
                                         />

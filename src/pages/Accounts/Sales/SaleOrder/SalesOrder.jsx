@@ -215,6 +215,7 @@ export default function SaleOrder() {
       headerName: "Action",
       field: "action",
       sortable: false,
+      pinned:"right",
       maxWidth: 200,
       minWidth: 150, // Corrected property name
       cellRenderer: (params) => {

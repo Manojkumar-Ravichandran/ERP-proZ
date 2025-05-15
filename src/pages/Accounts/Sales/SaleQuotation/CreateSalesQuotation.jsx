@@ -220,54 +220,108 @@ export default function CreateSalesQuotation() {
 
 
     const selectedMaterialId = itemFormMethods.watch("item_id");
-    const mobileNumberUserCheck = useCallback(async () => {
-        if (!contactNumber) return;
+//     const mobileNumberUserCheck = useCallback(async () => {
+//         if (!contactNumber) return;
 
-        let payload = location?.state?.contact
-            ? { lead_contact: location?.state?.contact }
-            : { mobile_no: contactNumber };
+//         let payload = location?.state?.contact
+//             ? { lead_contact: location?.state?.contact }
+//             : { mobile_no: contactNumber };
 
-        try {
-            const { data } = await CustomerListEffect(payload);
+//         try {
+//             const { data } = await CustomerListEffect(payload);
+// console.log("CustomerListEffect",data);
 
-            if (data?.lead?.length > 0) {
-                const firstLead = data.lead[0]; // Select first lead
+//             if (data?.lead?.length > 0) {
+//                 const firstLead = data.lead[0]; // Select first lead
                 
 
-                setLeadList(
-                    data.lead.map(list => ({
-                        ...list,
-                        label: `${list?.name} - ${list?.lead_id}`,
-                        value: list?.id,
-                    }))
-                );
+//                 setLeadList(
+//                     data.lead.map(list => ({
+//                         ...list,
+//                         label: `${list?.name} - ${list?.lead_id}`,
+//                         value: list?.id,
+//                     }))
+//                 );
 
-                const formattedLead = {
-                    value: firstLead.id,
-                    label: `${firstLead.name} - ${firstLead.lead_id}`,
-                };
-                setValue("cust_id", data?.data?.customer_id
-                    || "");
-                setValue("lead_id", firstLead?.lead_id || "");
-                setSelectedLead(formattedLead);
-                setValue("lead", formattedLead);
-                setValue("name", firstLead.name);
-                setValue("shipping_address", firstLead.site_address
-                    || "");
-                setValue("billing_address", firstLead.address || "");
-            } else {
-                // Reset fields if no lead found
-                setLeadList([]);
-                setSelectedLead(null);
-                reset({
-                    lead: "",
-                    name: "",
-                    shipping_address: "",
-                    billing_address: "",
-                });
-            }
-        } catch (error) {
-            console.error("Error fetching leads:", error);
+//                 const formattedLead = {
+//                     value: firstLead.id,
+//                     label: `${firstLead.name} - ${firstLead.lead_id}`,
+//                 };
+//                 setValue("cust_id", data?.data?.customer_id
+//                     || "");
+//                 setValue("lead_id", firstLead?.lead_id || "");
+//                 setSelectedLead(formattedLead);
+//                 setValue("lead", formattedLead);
+//                 setValue("name", firstLead.name);
+//                 setValue("shipping_address", firstLead.site_address
+//                     || "");
+//                 setValue("billing_address", firstLead.address || "");
+//             } else {
+//                 // Reset fields if no lead found
+//                 setLeadList([]);
+//                 setSelectedLead(null);
+//                 reset({
+//                     lead: "",
+//                     name: "",
+//                     shipping_address: "",
+//                     billing_address: "",
+//                 });
+//             }
+//         } catch (error) {
+//             console.error("Error fetching leads:", error);
+//             setLeadList([]);
+//             setSelectedLead(null);
+//             reset({
+//                 lead: "",
+//                 name: "",
+//                 shipping_address: "",
+//                 billing_address: "",
+//             });
+//         }
+//     }, [contactNumber, location?.state?.contact, setValue, reset]);
+
+const mobileNumberUserCheck = useCallback(async () => {
+    if (!contactNumber) return;
+
+    let payload = location?.state?.contact
+        ? { lead_contact: location?.state?.contact }
+        : { mobile_no: contactNumber };
+
+    try {
+        const { data } = await CustomerListEffect(payload);
+        console.log("CustomerListEffect", data);
+
+        const normalizeNumber = (number) => (number ? number.slice(-10) : "");
+
+        const matchedLeads = data?.lead?.filter(
+            lead => normalizeNumber(lead?.contact || "") === normalizeNumber(contactNumber)
+        );
+
+        if (matchedLeads?.length > 0) {
+            const firstLead = matchedLeads[0]; // Select first matched lead
+
+            setLeadList(
+                matchedLeads.map(list => ({
+                    ...list,
+                    label: `${list?.name} - ${list?.lead_id}`,
+                    value: list?.id,
+                }))
+            );
+
+            const formattedLead = {
+                value: firstLead.id,
+                label: `${firstLead.name} - ${firstLead.lead_id}`,
+            };
+
+            setValue("cust_id", firstLead.cust_id || "");
+            setValue("lead_id", firstLead.lead_id || "");
+            setSelectedLead(formattedLead);
+            setValue("lead", formattedLead);
+            setValue("name", firstLead.name);
+            setValue("shipping_address", firstLead.site_address || "");
+            setValue("billing_address", firstLead.address || "");
+        } else {
+            // Reset fields if no lead found
             setLeadList([]);
             setSelectedLead(null);
             reset({
@@ -277,7 +331,19 @@ export default function CreateSalesQuotation() {
                 billing_address: "",
             });
         }
-    }, [contactNumber, location?.state?.contact, setValue, reset]);
+    } catch (error) {
+        console.error("Error fetching leads:", error);
+        setLeadList([]);
+        setSelectedLead(null);
+        reset({
+            lead: "",
+            name: "",
+            shipping_address: "",
+            billing_address: "",
+        });
+    }
+}, [contactNumber, location?.state?.contact, setValue, reset]);
+
 
     useEffect(() => {
         if (selectedMaterialId) {
@@ -803,7 +869,7 @@ export default function CreateSalesQuotation() {
                                             register={itemFormMethods.register}
                                             errors={itemFormMethods.formState.errors}
                                             validation={{ required: false }}
-                                            disabled={true}
+                                            // disabled={true}
                                             className="mb-1"
                                         />
                                          <div className="flex items-center pt-4">

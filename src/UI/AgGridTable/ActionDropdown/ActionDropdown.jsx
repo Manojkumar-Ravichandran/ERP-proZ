@@ -5,10 +5,13 @@ import icons from '../../../contents/Icons';
 export default function ActionDropdown({ options = [], onAction, icon,
     iconClass = '', }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [dropDirection, setDropDirection] = useState('bottom');
     const dropdownRef = useRef(null); // Ref to track the dropdown menu
+    const buttonRef = useRef(null);
 
     const handleToggleDropdown = (event) => {
         event.stopPropagation(); // Stop event propagation
+        if (!isOpen) determineDropDirection();
         setIsOpen(prevState => !prevState);
     };
 
@@ -16,6 +19,16 @@ export default function ActionDropdown({ options = [], onAction, icon,
         event.stopPropagation(); // Stop event propagation
         onAction(action);
         setIsOpen(false); // Close dropdown after action
+    };
+
+    const determineDropDirection = () => {
+        if (buttonRef.current) {
+            const buttonRect = buttonRef.current.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            const dropdownHeight = options.length * 45 + 26;
+
+            setDropDirection(buttonRect.bottom + dropdownHeight > windowHeight ? 'top' : 'bottom');
+        }
     };
 
     // Effect to handle click outside the dropdown
@@ -35,9 +48,21 @@ export default function ActionDropdown({ options = [], onAction, icon,
         };
     }, []);
 
+    useEffect(() => {
+        if (isOpen) {
+            const handlePositionChange = () => determineDropDirection();
+            window.addEventListener('resize', handlePositionChange);
+            window.addEventListener('scroll', handlePositionChange, true);
+            return () => {
+                window.removeEventListener('resize', handlePositionChange);
+                window.removeEventListener('scroll', handlePositionChange, true);
+            };
+        }
+    }, [isOpen]);
+
     return (
         <div className="dropdown-menu-container" ref={dropdownRef}>
-            <button onClick={handleToggleDropdown} className="dropdown-button">
+            <button onClick={handleToggleDropdown} className="dropdown-button" ref={buttonRef}>
                 <div className="flex gap-1 items-center justify-center ">
 
                     <span className={iconClass}>
@@ -49,7 +74,7 @@ export default function ActionDropdown({ options = [], onAction, icon,
                 </div>
             </button>
             {isOpen && (
-                <div className="dropdown-menu">
+                <div className={`dropdown-menu ${dropDirection === 'top' ? 'dropdown-menu-top' : ''}`}>
                     <ul className="options-list">
                         {options.map((option, index) => (
                             <li

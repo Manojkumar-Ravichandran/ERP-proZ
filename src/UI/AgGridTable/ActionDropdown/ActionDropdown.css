@@ -65,3 +65,11 @@
 .option:active {
     background-color: #e0e0e0;
 }
+
+/* Styling for dropdown when appearing above the button */
+.dropdown-menu-top {
+    top: auto !important;
+    bottom: 100% !important;
+    margin-top: 0;
+    margin-bottom: 5px;
+}

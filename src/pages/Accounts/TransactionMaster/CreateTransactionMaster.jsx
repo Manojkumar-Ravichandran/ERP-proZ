@@ -35,11 +35,13 @@ const CreateTransactionMaster = ({ isCreateModal, setIsCreateModal, onClose, set
 
     const submitFormHandler = async (data) => {
         try {
+            const uppercaseName = data.name.toUpperCase();
             if (IsUpdate) {
                 const updatePayload = {
                     uuid: data.uuid, // Assuming `uuid` is part of the `data` object
                     type: data.type,
-                    name: data.name,
+                    // name: data.name,
+                    name: uppercaseName,
                 };
                 const updateDebitResponse = await getTransactionMatsterUpdateEffect(updatePayload); // Call the update API
 
@@ -55,7 +57,8 @@ const CreateTransactionMaster = ({ isCreateModal, setIsCreateModal, onClose, set
                 // Create Debit API Call
                 const createPayload = {
 
-                    name: data.name,
+                    // name: data.name,
+                    name: uppercaseName,
                     type: data.type,
                 };
 
@@ -108,7 +111,7 @@ const CreateTransactionMaster = ({ isCreateModal, setIsCreateModal, onClose, set
                         iconLabel={icons?.productValue}
                         placeholder="Enter  Name"
                         register={register}
-                        upper={true}
+                        // upper={true}
                         validation={{
                             required: "name  is required",
 

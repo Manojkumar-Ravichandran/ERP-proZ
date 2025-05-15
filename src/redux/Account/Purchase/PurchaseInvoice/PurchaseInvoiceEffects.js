@@ -63,17 +63,17 @@ export const cancelSalesOrderEffect = (datas) => {
 
 
 export const pdfCustomerEffect = (datas) => {
-  return apiRequest("post", "/salesinvoice-pdf", datas, true);
+  return apiRequest("post", "/purchaseinvoice-pdf", datas, true);
 };
 
 
 export const pdfWhatsappCustomerEffect = (datas) => {
-  return apiRequest("post", "/salesinvoice-whatsapp-pdf", datas, true);
+  return apiRequest("post", "/purchaseinvoice-whatsapppdf", datas, true);
 };
 
 
 export const pdfMailCustomerEffect = (datas) => {
-  return apiRequest("post", "/salesinvoice-mail-pdf", datas, true);
+  return apiRequest("post", "/purchaseinvoice-mailpdf", datas, true);
 };
 
 

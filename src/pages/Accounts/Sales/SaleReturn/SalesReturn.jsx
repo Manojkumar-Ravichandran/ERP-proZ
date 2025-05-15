@@ -160,60 +160,61 @@ export default function SalesReturn() {
     {
       headerName: "Amount", field: "total_amount", unSortIcon: false,
     },
+    { headerName: "Status", field: "status", unSortIcon: true },
 
-    // {
-    //   headerName: "Status",
-    //   field: "unit_description",
-    //   sortable: false,
-    //   cellRenderer: (params) => {
-    //     const statusMapping = {
-    //       1: "darkpurple",
-    //       0: "darkpink",
-    //     };
+    {
+      headerName: "Status",
+      field: "unit_description",
+      sortable: false,
+      cellRenderer: (params) => {
+        const statusMapping = {
+          1: "darkpurple",
+          0: "darkpink",
+        };
 
-    //     // Get the appropriate status based on the stage_name
-    //     
-    //     const status = statusMapping[params?.data?.status];
-    //     return (
-    //       <div className="flex justify-center items-center w-100">
-    //         {params?.data?.status === 2 || params?.data?.status === 3 ? (
-    //           <div className="flex justify-center items-center">
-    //              <button
-    //                              className="top-clr underline text-center"
-    //                              onClick={() => {
-    //                                
-    //                                const path =
-    //                                  params.data?.status == 2
-    //                                    ? "/user/accounts/sale/sale-order"
-    //                                    : "/user/accounts/sale/sale-invoice";
-    //                                navigate(path);
-    //                              }}
-    //                              title={params.data?.status == 2 ? "Order" : "Invoice"}
-    //                            >
-    //                              Converted..</button>
-    //           </div>
-    //         ) : (
-    //           <div className="flex justify-center">
-    //             <StatusManager
-    //               status={status}
-    //               message={
-    //                 params?.data?.status === 1
-    //                   ? 'Pending'
-    //                   : params?.data?.status === 0
-    //                     ? 'Rejected' : ""
-    //               }
-    //               tooltipMessage="This is a success message"
-    //               tooltipPosition="right"
-    //               tooltipId={params?.data?.quotation_id}  // Unique ID for this status
+        // Get the appropriate status based on the stage_name
+        
+        const status = statusMapping[params?.data?.status];
+        return (
+          <div className="flex justify-center items-center w-100">
+            {params?.data?.status === 2 || params?.data?.status === 3 ? (
+              <div className="flex justify-center items-center">
+                 <button
+                                 className="top-clr underline text-center"
+                                 onClick={() => {
+                                   
+                                   const path =
+                                     params.data?.status == 2
+                                       ? "/user/accounts/sale/sale-order"
+                                       : "/user/accounts/sale/sale-invoice";
+                                   navigate(path);
+                                 }}
+                                 title={params.data?.status == 2 ? "Order" : "Invoice"}
+                               >
+                                 Converted..</button>
+              </div>
+            ) : (
+              <div className="flex justify-center">
+                <StatusManager
+                  status={status}
+                  message={
+                    params?.data?.status === 1
+                      ? 'Pending'
+                      : params?.data?.status === 0
+                        ? 'Rejected' : ""
+                  }
+                  tooltipMessage="This is a success message"
+                  tooltipPosition="right"
+                  tooltipId={params?.data?.quotation_id}  // Unique ID for this status
 
-    //             />            </div>
-    //         )}
-    //       </div>
+                />            </div>
+            )}
+          </div>
 
-    //     );
-    //   },
-    // }
-    // ,
+        );
+      },
+    }
+    ,
   
     {
       headerName: "Reason", field: "return_reason", unSortIcon: false,

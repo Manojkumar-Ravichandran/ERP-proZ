@@ -193,6 +193,12 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
             if (onClose) onClose();
         }
     };
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); 
+            handleSubmit(submitFormHandler)();
+        }
+    };
 
     return (
         <>
@@ -207,6 +213,7 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
             >
                 <form
                     onSubmit={handleSubmit(submitFormHandler)}
+                    onKeyDown={handleKeyDown}
                 >
                     {!IsUpdate && headType === "sub" && (
                         <div className="mb-4">
@@ -250,7 +257,7 @@ const CreateMajorandSubHead = ({ isCreateModal, setIsCreateModal, onClose, setTo
                     <input type="hidden" id="uuid"{...register("uuid")} />
                     <div className="flex justify-end gap-4 pt-4">
                         <button
-                            type="summit"
+                            type="button"
                             className="border border-gray-400 px-4 py-2 rounded"
                             onClick={() => {
                                 reset();

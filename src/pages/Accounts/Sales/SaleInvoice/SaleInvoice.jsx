@@ -326,16 +326,27 @@ export default function SaleInvoice() {
           try {
             const response = await PdfiCustomerEffect({ uuid: params.data.uuid });
     
-            if (response?.data?.data) {
-              window.open(response?.data?.data, "_blank");
-            }
-            else {
+            // if (response?.data?.data) {
+            //   window.open(response?.data?.data, "_blank");
+            // }
+            // else {
+            //   setToastData({
+            //     show: true,
+            //     message: response?.data?.message,
+            //     type: response?.data?.status
+            //   });
+    
+            // }
+            const pdfLink = response?.data?.data || response?.data?.message;
+
+            if (pdfLink && /^https?:\/\/\S+\.\w+/.test(pdfLink)) {
+              window.open(pdfLink, "_blank");
+            } else {
               setToastData({
                 show: true,
-                message: response?.data?.message,
-                type: response?.data?.status
+                message: response?.data?.message || "Failed to open PDF.",
+                type: response?.data?.status || "error"
               });
-    
             }
             fetchLeadList();
           } catch (error) {

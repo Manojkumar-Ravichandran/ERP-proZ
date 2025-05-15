@@ -13,6 +13,8 @@ const AccountMaster = () => {
     const {reset} = useForm();
     const [masterList, setMasterList] = useState({ data: [] });
     const [currentMajorHead, setCurrentMajorHead] = useState(null);
+    console.log("currentMajorHead",currentMajorHead);
+    
     const [searchText, setSearchText] = useState("");
     const [isApproveModal, setIsApproveModal] = useState(false);
     const [isUpdate, setIsUpdate] = useState(false);
@@ -26,6 +28,7 @@ const AccountMaster = () => {
     const [majorHeadList, setMajorHeadList] = useState([]);
     const [subHeadList, setSubHeadList] = useState([]);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [dataToDelete, setDataToDelete] = useState(null);
     
 
     const toastOnclose = () => {
@@ -150,17 +153,19 @@ const AccountMaster = () => {
 };
 
 const openDeleteModal = (data) => {
+        setDataToDelete(data);
         setIsDeleteModalOpen(true);
     };
-const handleDelete = async (data) => {
+const handleDelete = async () => {
+    if (!dataToDelete) return;
 
         setLoading(true);
         try {
             const payload = {
-                uuid:data.uuid
+                uuid:dataToDelete.uuid
             }
             let response;
-            if (data.headType === "major") {
+            if (dataToDelete.headType === "major") {
                 response = await majorHeadDeleteEffect(payload);
             } else {
                 response = await subHeadDeleteEffect(payload);
@@ -169,13 +174,14 @@ const handleDelete = async (data) => {
             if (response?.status === 200) {
                 setToastData({
                     type: "success",
-                    message: `${data.headType === "major" ? "Major Head" : "Sub Head"} Deleted successfully`,
+                    message: `${dataToDelete.headType === "major" ? "Major Head" : "Sub Head"} Deleted successfully`,
                 })
+                setIsDeleteModalOpen(false);
             }
-             if (data.headType === "major") {
+             if (dataToDelete.headType === "major") {
                     fetchMajorHeadList(activeTab); 
                 } else {
-                    fetchSubHeadList(currentMajorHead.section, currentMajorHead.name, searchText); 
+                    fetchSubHeadList(currentMajorHead.section, currentMajorHead.id, searchText); 
                 }
         } catch (error) {
             console.error("Failed to delete:", error);
@@ -191,6 +197,7 @@ const handleDelete = async (data) => {
 }
 const cancelDelete = () => {
     setIsDeleteModalOpen(false);
+    setDataToDelete(null);
   };
     const handleClearFilters = () => {
         setSearchText('')
@@ -198,11 +205,13 @@ const cancelDelete = () => {
         setActiveTab("liability");
     };
     const handleCardClick = (card) => {
+        console.log("handleCardClick",card);
+        
         setActiveCard(card.id);
         setCurrentMajorHead(card);
         setSelectedData({ headType: "major", majorhead: card.name, section: card.section, id:card.id });
         
-        fetchSubHeadList(card.section, card.name);
+        // fetchSubHeadList(card.section, card.name);
     };
     const handleSearchChange = (e) => {
         setSearchText(e.target.value);
@@ -214,7 +223,7 @@ const cancelDelete = () => {
         setSelectedData(null);
         fetchMajorHeadList(activeTab);
         if (currentMajorHead) {
-        fetchSubHeadList(currentMajorHead.section, currentMajorHead.name, searchText);
+        fetchSubHeadList(currentMajorHead.section, currentMajorHead.id, searchText);
         }
     };
     return(

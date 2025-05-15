@@ -84,7 +84,7 @@ export const CustomerListEffect = (datas) => {
 export const WhatsAppShareEffect = (datas) => {
   const data = (JSON.stringify(datas));
   return leadInstance.request({
-    url: "/salesorder-pdf",
+    url: "/salesorder-whatsapppdf",
     method: "post",
     data,
   });

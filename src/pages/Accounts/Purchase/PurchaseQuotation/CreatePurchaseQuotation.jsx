@@ -749,7 +749,7 @@ export default function CreatePurchaseQuotation() {
                                             register={itemFormMethods.register}
                                             errors={itemFormMethods.formState.errors}
                                             validation={{ required: false }}
-                                            disabled={true}
+                                            // disabled={true}
                                             className="mb-1"
                                         />
                                         <div className="flex items-center pt-4">

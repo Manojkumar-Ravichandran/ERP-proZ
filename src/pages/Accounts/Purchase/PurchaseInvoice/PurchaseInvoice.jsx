@@ -23,7 +23,7 @@ import { getSaleQuotationListEffect, rejectSaleQuotationEffect, SQToOrderEffect 
 import Modal from "../../../../UI/Modal/Modal";
 import TextArea from "../../../../UI/Input/TextArea/TextArea";
 import { getSaleInvoiceListEffect } from "../../../../redux/Account/Sales/SaleInvoice/SaleInvoiceEffects";
-import { listPurchaseInvoiceEffect, listSalesInvoiceEffect } from "../../../../redux/Account/Purchase/PurchaseInvoice/PurchaseInvoiceEffects";
+import { listPurchaseInvoiceEffect, listSalesInvoiceEffect, pdfCustomerEffect, pdfMailCustomerEffect, pdfWhatsappCustomerEffect } from "../../../../redux/Account/Purchase/PurchaseInvoice/PurchaseInvoiceEffects";
 
 export default function PurchaseInvoice() {
   const navigate = useNavigate();
@@ -92,17 +92,20 @@ export default function PurchaseInvoice() {
 
   const ActionDropdowns = [
     {
+      action:"whatsapp",
       value: "Pending",
       label: "Whatsapp",
       iconClass: "top-clr rounded-full border p-1 cursor-pointer",
       icon: icons.whatsapp
     },
     {
+      action:"mail",
       value: "Rejected", label: "Mail",
       iconClass: "top-clr rounded-full border p-1 cursor-pointer",
       icon: icons.mail
     },
     {
+      action:"pdf",
       value: "Converted", label: "PDF",
       iconClass: "top-clr rounded-full border p-1 cursor-pointer",
       icon: icons.pdf
@@ -281,6 +284,8 @@ export default function PurchaseInvoice() {
 
 
   const handleAction = async (action, params, master) => {
+    console.log("handleAction",params.data);
+    
     if (action === "order" && params.data) {
       try {
         const response = await SQToOrderEffect({ uuid: params.data.uuid });
@@ -305,6 +310,64 @@ export default function PurchaseInvoice() {
       // setSelectedRequest(params.data);
       // setIsViewModal(true);
     }
+    else if (action === "whatsapp" && params?.data?.uuid) {
+              try {
+                const response = await pdfWhatsappCustomerEffect({ uuid: params.data.uuid });
+                console.log("pdfWhatsappCustomerEffect",response);
+                
+                setToastData({
+                  show: true,
+                  message: response?.data?.message,
+                  type: response?.data?.status
+                });
+                fetchLeadList();
+              } catch (error) {
+                setToastData({
+                  show: true,
+                  message: 'Failed to Share Whatsapp. Please try again.',
+                  type: 'error'
+                });
+              }
+            }else if (action === "mail" && params?.data?.uuid) {
+                      try {
+                        const response = await pdfMailCustomerEffect({ uuid: params.data.uuid });
+                        setToastData({
+                          show: true,
+                          message: response?.data?.message,
+                          type: response?.data?.status
+                        });
+                        fetchLeadList();
+                      } catch (error) {
+                        setToastData({
+                          show: true,
+                          message: 'Failed to Share Mail. Please try again.',
+                          type: 'error'
+                        });
+                      }
+                    }else if (action === "pdf" && params?.data?.uuid) {
+                              try {
+                                const response = await pdfCustomerEffect({ uuid: params.data.uuid });
+                        
+                                if (response?.data?.data) {
+                                  window.open(response?.data?.data, "_blank");
+                                }
+                                else {
+                                  setToastData({
+                                    show: true,
+                                    message: response?.data?.message,
+                                    type: response?.data?.status
+                                  });
+                        
+                                }
+                                fetchLeadList();
+                              } catch (error) {
+                                setToastData({
+                                  show: true,
+                                  message: 'Failed to Share Pdf. Please try again.',
+                                  type: 'error'
+                                });
+                              }
+                            }
     else if (action === "cancel") {
       setSelectedUser(params.data);
       setIsCancelModal(true);
